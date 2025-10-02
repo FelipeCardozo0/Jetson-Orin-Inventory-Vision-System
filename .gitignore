@@ -1,0 +1,71 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+*.egg-info/
+dist/
+build/
+
+# Database
+*.db
+*.db-journal
+*.sqlite
+*.sqlite3
+
+# Logs
+*.log
+*.log.*
+
+# Environment variables
+.env
+.env.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Project specific
+inventory.db
+inventory_events.log
+report_generator.log
+report_cron.log
+low_inventory_snapshot.jpg
+inventory_report_*.csv
+
+# Temporary files
+*.tmp
+*.temp
+
+# Large model files (already in repo, keep for now)
+# best.pt
+
+# Milad's progress folder (appears to be unrelated boot files)
+Milad's progress/
+
+# Zip files (very large)
+*.zip
+project-2-at-2025-09-11-20-06-14f25e97.zip
+YOLOv8 OBB/
+
+# Image training data (too large for GitHub - can upload separately or use Git LFS)
+Images/
+
+# Old project folder (can be added selectively if needed)
+project-2-at-2025-09-11-20-06-14f25e97/images/
+project-2-at-2025-09-11-20-06-14f25e97/labels/
+project-2-at-2025-09-11-20-06-14f25e97/pokebowl_dataset/
+project-2-at-2025-09-11-20-06-14f25e97/pokebowl_dataset.zip
+

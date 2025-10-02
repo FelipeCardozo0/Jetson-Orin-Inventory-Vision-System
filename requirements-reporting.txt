@@ -1,0 +1,11 @@
+# Requirements for Automated Monthly Reporting System
+# Install with: pip install -r requirements-reporting.txt
+
+# Date manipulation for month calculations
+python-dateutil>=2.8.0
+
+# Already required by main system (included here for completeness)
+ultralytics>=8.0.0
+opencv-python>=4.8.0
+pyyaml>=6.0
+

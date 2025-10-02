@@ -1,0 +1,131 @@
+================================================================================
+  CRON JOB SETUP - Quick Reference Guide
+  Automated Monthly Inventory Reports
+================================================================================
+
+STEP 1: Open Crontab Editor
+----------------------------
+crontab -e
+
+
+STEP 2: Add This Line (Replace /path/to/project with your actual path)
+-----------------------------------------------------------------------
+0 2 1 * * cd /home/pi/your-project-directory && /usr/bin/python3 /home/pi/your-project-directory/report_generator.py >> /home/pi/your-project-directory/report_cron.log 2>&1
+
+
+DETAILED EXPLANATION:
+---------------------
+0 2 1 * *     → Schedule: 2:00 AM on the 1st day of every month
+cd /path      → Change to project directory first
+&& python3    → Then run the report generator script
+>> file 2>&1  → Log both stdout and stderr to report_cron.log
+
+
+STEP 3: Save and Exit
+---------------------
+- In nano: Press Ctrl+X, then Y, then Enter
+- In vim: Press Esc, type :wq, press Enter
+
+
+STEP 4: Verify Cron Job is Scheduled
+-------------------------------------
+crontab -l
+
+
+================================================================================
+  ALTERNATIVE SCHEDULES
+================================================================================
+
+Run at midnight on the 1st of each month:
+0 0 1 * * cd /path/to/project && python3 report_generator.py >> report_cron.log 2>&1
+
+Run at 11:59 PM on the last day of each month:
+59 23 28-31 * * [ $(date -d tomorrow +\%d) -eq 1 ] && cd /path/to/project && python3 report_generator.py >> report_cron.log 2>&1
+
+Run every Sunday at 8:00 AM (weekly reports):
+0 8 * * 0 cd /path/to/project && python3 report_generator.py >> report_cron.log 2>&1
+
+Run every day at 3:00 AM:
+0 3 * * * cd /path/to/project && python3 report_generator.py >> report_cron.log 2>&1
+
+
+================================================================================
+  TROUBLESHOOTING
+================================================================================
+
+Check if cron service is running:
+sudo service cron status
+
+Restart cron service:
+sudo service cron restart
+
+View your cron jobs:
+crontab -l
+
+Remove all cron jobs (careful!):
+crontab -r
+
+View cron execution log:
+tail -f /path/to/project/report_cron.log
+
+View report generator detailed log:
+tail -f /path/to/project/report_generator.log
+
+
+================================================================================
+  ENVIRONMENT VARIABLES FOR EMAIL
+================================================================================
+
+Add these to your ~/.bashrc file:
+
+export SMTP_HOST="smtp.gmail.com"
+export SMTP_PORT="465"
+export SMTP_USER="your-email@gmail.com"
+export SMTP_PASS="your-app-password"
+export NOTIFY_FROM="your-email@gmail.com"
+export NOTIFY_TO="recipient@example.com"
+
+Then reload:
+source ~/.bashrc
+
+Note: For Gmail, you must use an "App Password" not your regular password!
+Generate one at: Google Account → Security → 2-Step Verification → App Passwords
+
+
+================================================================================
+  TESTING
+================================================================================
+
+Test the report generator manually:
+python3 report_generator.py
+
+Test for a specific month:
+python3 report_generator.py --month 2025-10
+
+Test email configuration:
+python3 -c "from notify_enhanced import send_email; send_email('Test', 'Body', None)"
+
+
+================================================================================
+  COMPLETE SETUP COMMAND (All-in-One)
+================================================================================
+
+Run this if your project is at /home/pi/inventory-project:
+
+(crontab -l 2>/dev/null; echo "0 2 1 * * cd /home/pi/inventory-project && /usr/bin/python3 /home/pi/inventory-project/report_generator.py >> /home/pi/inventory-project/report_cron.log 2>&1") | crontab -
+
+
+================================================================================
+  USEFUL TIPS
+================================================================================
+
+1. Always use ABSOLUTE paths in crontab (not relative paths like ./ or ~/)
+2. Test your script manually before adding to cron
+3. Check logs regularly to ensure reports are being generated
+4. Backup your database file regularly
+5. The cron environment is limited - export variables if needed
+6. Use >> for append, > for overwrite in log redirection
+
+
+================================================================================
+

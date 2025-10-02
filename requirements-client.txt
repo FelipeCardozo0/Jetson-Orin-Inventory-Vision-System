@@ -1,0 +1,13 @@
+# Requirements for Raspberry Pi Client
+# Install with: pip install -r requirements-client.txt
+
+# YOLOv8 and computer vision
+ultralytics>=8.0.0
+opencv-python>=4.8.0
+
+# WebSocket support
+websockets>=11.0
+
+# Async support (usually included in Python 3.7+)
+# No additional package needed for asyncio
+

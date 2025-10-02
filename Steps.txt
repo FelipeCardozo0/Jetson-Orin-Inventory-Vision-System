@@ -1,0 +1,28 @@
+import os
+from PIL import Image
+import pillow_heif
+
+src_dir = r"C:\Users\felip\OneDrive\Desktop\Deletable\Pina"
+dst_dir = r"C:\Users\felip\OneDrive\Desktop\Stanford Mode\Poke Bowl Project\Images\Pina"
+
+os.makedirs(dst_dir, exist_ok=True)
+
+for file in os.listdir(src_dir):
+    if file.lower().endswith(".heic"):
+        heif = pillow_heif.read_heif(os.path.join(src_dir, file))
+        img = Image.frombytes(heif.mode, heif.size, heif.data)
+        name = os.path.splitext(file)[0] + ".jpg"
+        img.save(os.path.join(dst_dir, name), "JPEG")
+
+print("Done.")
+
+lemonade pineapple orange vanilla icetea cherry root
+coldbrew jasminegreentea unsweetened golden lychee mango pineapple passion guava black
+
+# Mount Google Drive
+from google.colab import drive
+drive.mount('/content/gdrive')
+
+# Root dir
+
+# Install ultralytics
