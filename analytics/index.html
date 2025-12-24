@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YOLOv8 Analytics Hub - Investor Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            font-size: 3em;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .subtitle {
+            font-size: 1.3em;
+            opacity: 0.9;
+            margin-bottom: 20px;
+        }
+
+        .description {
+            font-size: 1.1em;
+            opacity: 0.8;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        .dashboards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .dashboard-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .dashboard-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+        }
+
+        .dashboard-icon {
+            font-size: 3em;
+            margin-bottom: 20px;
+            color: #667eea;
+        }
+
+        .dashboard-title {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .dashboard-description {
+            color: #666;
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+
+        .dashboard-features {
+            list-style: none;
+            margin-bottom: 20px;
+        }
+
+        .dashboard-features li {
+            padding: 5px 0;
+            color: #555;
+            font-size: 0.9em;
+        }
+
+        .dashboard-features li:before {
+            content: "✓ ";
+            color: #22c55e;
+            font-weight: bold;
+        }
+
+        .dashboard-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            width: 100%;
+        }
+
+        .dashboard-button:hover {
+            transform: scale(1.05);
+        }
+
+        .quick-stats {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            margin-bottom: 40px;
+        }
+
+        .stats-title {
+            font-size: 1.8em;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #333;
+            text-align: center;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .stat-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .footer {
+            text-align: center;
+            color: white;
+            margin-top: 40px;
+            opacity: 0.8;
+        }
+
+        .tech-stack {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            margin-bottom: 40px;
+        }
+
+        .tech-title {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #333;
+            text-align: center;
+        }
+
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+
+        .tech-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: bold;
+            color: #555;
+        }
+
+        @media (max-width: 768px) {
+            .dashboards-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 2.5em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>YOLOv8 Analytics Hub</h1>
+            <p class="subtitle">AI-Powered Inventory Monitoring System</p>
+            <p class="description">
+                Comprehensive analytics and business intelligence platform showcasing the value and performance 
+                of our YOLOv8-based inventory monitoring solution. Explore real-time metrics, ROI calculations, 
+                and competitive advantages.
+            </p>
+        </header>
+
+        <!-- Quick Stats -->
+        <div class="quick-stats">
+            <div class="stats-title">System Overview</div>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-value">47</div>
+                    <div class="stat-label">Active Locations</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">$2.4M</div>
+                    <div class="stat-label">Annual Savings</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">98.7%</div>
+                    <div class="stat-label">Detection Accuracy</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">99.8%</div>
+                    <div class="stat-label">System Uptime</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">450%</div>
+                    <div class="stat-label">Average ROI</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">2.7</div>
+                    <div class="stat-label">Payback (Months)</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboards Grid -->
+        <div class="dashboards-grid">
+            <a href="dashboards/investor_dashboard.html" class="dashboard-card">
+                <div class="dashboard-icon">📊</div>
+                <div class="dashboard-title">Investor Dashboard</div>
+                <div class="dashboard-description">
+                    Comprehensive business metrics, revenue growth, and competitive analysis for investor presentations.
+                </div>
+                <ul class="dashboard-features">
+                    <li>Revenue growth charts</li>
+                    <li>Customer acquisition metrics</li>
+                    <li>Cost savings breakdown</li>
+                    <li>Competitive analysis</li>
+                    <li>Market opportunity data</li>
+                </ul>
+                <button class="dashboard-button">View Dashboard</button>
+            </a>
+
+            <a href="dashboards/roi_calculator.html" class="dashboard-card">
+                <div class="dashboard-icon">💰</div>
+                <div class="dashboard-title">ROI Calculator</div>
+                <div class="dashboard-description">
+                    Interactive calculator to demonstrate return on investment for different business scenarios.
+                </div>
+                <ul class="dashboard-features">
+                    <li>Customizable business parameters</li>
+                    <li>Real-time ROI calculations</li>
+                    <li>Multiple scenario modeling</li>
+                    <li>Payback period analysis</li>
+                    <li>Cost savings breakdown</li>
+                </ul>
+                <button class="dashboard-button">Calculate ROI</button>
+            </a>
+
+            <a href="dashboards/real_time_monitoring.html" class="dashboard-card">
+                <div class="dashboard-icon">📡</div>
+                <div class="dashboard-title">Real-Time Monitoring</div>
+                <div class="dashboard-description">
+                    Live system performance metrics, location status, and business impact monitoring.
+                </div>
+                <ul class="dashboard-features">
+                    <li>Live performance metrics</li>
+                    <li>Location status monitoring</li>
+                    <li>System health indicators</li>
+                    <li>Real-time alerts</li>
+                    <li>Business impact tracking</li>
+                </ul>
+                <button class="dashboard-button">Monitor System</button>
+            </a>
+        </div>
+
+        <!-- Technology Stack -->
+        <div class="tech-stack">
+            <div class="tech-title">Technology Stack</div>
+            <div class="tech-grid">
+                <div class="tech-item">YOLOv8</div>
+                <div class="tech-item">FastAPI</div>
+                <div class="tech-item">WebSockets</div>
+                <div class="tech-item">OpenCV</div>
+                <div class="tech-item">Chart.js</div>
+                <div class="tech-item">D3.js</div>
+                <div class="tech-item">Python</div>
+                <div class="tech-item">Raspberry Pi</div>
+                <div class="tech-item">Real-time AI</div>
+                <div class="tech-item">Edge Computing</div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>YOLOv8 Inventory Monitoring System | AI-Powered Business Intelligence</p>
+            <p>Built for investors, by innovators</p>
+        </div>
+    </div>
+</body>
+</html>
+
+
+

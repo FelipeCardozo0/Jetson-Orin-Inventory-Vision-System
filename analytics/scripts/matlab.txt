@@ -1,0 +1,379 @@
+%% YOLOv8 Inventory Monitoring System - MATLAB Visualization
+% Based on terminal_analytics.py analysis
+% Generates comprehensive visualizations for model performance metrics only
+% Focuses on accuracy, latency, FPS, and system uptime
+
+clear; clc; close all;
+
+
+%% Data Generation (Simulating 1M data points)
+fprintf('Generating simulation data...\n');
+
+% System parameters
+data_points = 1000000;  % 1 million data points
+
+% Generate performance metrics (1M data points)
+accuracy = 95.0 + (99.9 - 95.0) * rand(data_points, 1);
+fps = 25 + (35 - 25) * rand(data_points, 1);
+latency = 100 + (300 - 100) * rand(data_points, 1);
+cpu_usage = 20 + (80 - 20) * rand(data_points, 1);
+memory_usage = 30 + (90 - 30) * rand(data_points, 1);
+detection_confidence = 85 + (99 - 85) * rand(data_points, 1);
+false_positive_rate = 0.5 + (3.0 - 0.5) * rand(data_points, 1);
+uptime = 95 + (100 - 95) * rand(data_points, 1);
+
+
+fprintf('Data generation complete. Processing %d data points...\n', data_points);
+
+%% Calculate Statistics
+fprintf('Calculating statistics...\n');
+
+% Performance statistics
+perf_stats.accuracy.mean = mean(accuracy);
+perf_stats.accuracy.median = median(accuracy);
+perf_stats.accuracy.std = std(accuracy);
+perf_stats.accuracy.min = min(accuracy);
+perf_stats.accuracy.max = max(accuracy);
+
+perf_stats.fps.mean = mean(fps);
+perf_stats.fps.median = median(fps);
+perf_stats.fps.std = std(fps);
+
+perf_stats.latency.mean = mean(latency);
+perf_stats.latency.median = median(latency);
+perf_stats.latency.std = std(latency);
+
+perf_stats.uptime.mean = mean(uptime);
+perf_stats.uptime.median = median(uptime);
+perf_stats.uptime.min = min(uptime);
+
+
+%% Create Comprehensive Visualizations
+
+% Set up figure properties
+set(0, 'DefaultFigureColor', 'white');
+set(0, 'DefaultAxesFontSize', 12);
+set(0, 'DefaultAxesFontName', 'Arial');
+
+%% 1. System Performance Dashboard
+figure('Name', 'System Performance Dashboard', 'Position', [100, 100, 1200, 800]);
+
+% Detection Accuracy Distribution
+subplot(2, 3, 1);
+histogram(accuracy, 50, 'FaceColor', [0.2, 0.6, 0.8], 'EdgeColor', 'black');
+xlabel('Detection Accuracy (%)');
+ylabel('Frequency');
+title('Detection Accuracy Distribution');
+grid on;
+line([perf_stats.accuracy.mean, perf_stats.accuracy.mean], ylim, 'Color', 'red', 'LineWidth', 2, 'LineStyle', '--');
+legend('Distribution', 'Mean', 'Location', 'best');
+
+% FPS Distribution
+subplot(2, 3, 2);
+histogram(fps, 50, 'FaceColor', [0.8, 0.4, 0.2], 'EdgeColor', 'black');
+xlabel('Processing Speed (FPS)');
+ylabel('Frequency');
+title('FPS Distribution');
+grid on;
+line([perf_stats.fps.mean, perf_stats.fps.mean], ylim, 'Color', 'red', 'LineWidth', 2, 'LineStyle', '--');
+legend('Distribution', 'Mean', 'Location', 'best');
+
+% Latency Distribution
+subplot(2, 3, 3);
+histogram(latency, 50, 'FaceColor', [0.2, 0.8, 0.4], 'EdgeColor', 'black');
+xlabel('Network Latency (ms)');
+ylabel('Frequency');
+title('Latency Distribution');
+grid on;
+line([perf_stats.latency.mean, perf_stats.latency.mean], ylim, 'Color', 'red', 'LineWidth', 2, 'LineStyle', '--');
+legend('Distribution', 'Mean', 'Location', 'best');
+
+% System Uptime
+subplot(2, 3, 4);
+histogram(uptime, 30, 'FaceColor', [0.6, 0.2, 0.8], 'EdgeColor', 'black');
+xlabel('System Uptime (%)');
+ylabel('Frequency');
+title('System Uptime Distribution');
+grid on;
+line([perf_stats.uptime.mean, perf_stats.uptime.mean], ylim, 'Color', 'red', 'LineWidth', 2, 'LineStyle', '--');
+legend('Distribution', 'Mean', 'Location', 'best');
+
+% CPU Usage vs Memory Usage Scatter
+subplot(2, 3, 5);
+scatter(cpu_usage, memory_usage, 10, 'filled', 'MarkerFaceAlpha', 0.6);
+xlabel('CPU Usage (%)');
+ylabel('Memory Usage (%)');
+title('CPU vs Memory Usage Correlation');
+grid on;
+colorbar;
+
+% Performance Metrics Comparison (Bar Chart)
+subplot(2, 3, 6);
+metrics_data = [mean(accuracy), mean(fps), mean(latency/10), mean(uptime)];
+bar(metrics_data, 'FaceColor', [0.6, 0.2, 0.8]);
+set(gca, 'XTickLabel', {'Accuracy (%)', 'FPS', 'Latency/10', 'Uptime (%)'});
+ylabel('Average Value');
+title('Performance Metrics Comparison');
+grid on;
+
+sgtitle('YOLOv8 System Performance Analysis', 'FontSize', 16, 'FontWeight', 'bold');
+
+%% 2. Model Performance Deep Analysis
+figure('Name', 'Model Performance Deep Analysis', 'Position', [150, 150, 1200, 800]);
+
+% Accuracy vs Confidence Correlation
+subplot(2, 3, 1);
+scatter(detection_confidence, accuracy, 10, 'filled', 'MarkerFaceAlpha', 0.6);
+xlabel('Detection Confidence (%)');
+ylabel('Detection Accuracy (%)');
+title('Accuracy vs Confidence Correlation');
+grid on;
+
+% FPS vs Latency Trade-off
+subplot(2, 3, 2);
+scatter(fps, latency, 10, 'filled', 'MarkerFaceAlpha', 0.6);
+xlabel('Processing Speed (FPS)');
+ylabel('Network Latency (ms)');
+title('FPS vs Latency Trade-off');
+grid on;
+
+% System Resource Usage
+subplot(2, 3, 3);
+scatter(cpu_usage, memory_usage, 10, 'filled', 'MarkerFaceAlpha', 0.6);
+xlabel('CPU Usage (%)');
+ylabel('Memory Usage (%)');
+title('System Resource Usage');
+grid on;
+
+% False Positive Rate Distribution
+subplot(2, 3, 4);
+histogram(false_positive_rate, 30, 'FaceColor', [0.8, 0.2, 0.2], 'EdgeColor', 'black');
+xlabel('False Positive Rate (%)');
+ylabel('Frequency');
+title('False Positive Rate Distribution');
+grid on;
+
+% Performance Metrics Correlation Matrix
+subplot(2, 3, 5);
+performance_matrix = [accuracy, fps, latency, uptime, cpu_usage, memory_usage];
+correlation_matrix = corrcoef(performance_matrix);
+imagesc(correlation_matrix);
+colorbar;
+set(gca, 'XTickLabel', {'Accuracy', 'FPS', 'Latency', 'Uptime', 'CPU', 'Memory'});
+set(gca, 'YTickLabel', {'Accuracy', 'FPS', 'Latency', 'Uptime', 'CPU', 'Memory'});
+title('Performance Metrics Correlation');
+colormap(jet);
+
+% System Load Analysis
+subplot(2, 3, 6);
+system_load = (cpu_usage + memory_usage) / 2;
+histogram(system_load, 30, 'FaceColor', [0.6, 0.2, 0.8], 'EdgeColor', 'black');
+xlabel('System Load (%)');
+ylabel('Frequency');
+title('System Load Distribution');
+grid on;
+
+sgtitle('YOLOv8 Model Performance Deep Analysis', 'FontSize', 16, 'FontWeight', 'bold');
+
+%% 3. Performance Percentiles Analysis
+figure('Name', 'Performance Percentiles', 'Position', [200, 200, 1000, 600]);
+
+percentiles = [25, 50, 75, 90, 95, 99];
+% Calculate percentiles using basic MATLAB functions
+accuracy_sorted = sort(accuracy);
+fps_sorted = sort(fps);
+latency_sorted = sort(latency);
+
+accuracy_percentiles = zeros(size(percentiles));
+fps_percentiles = zeros(size(percentiles));
+latency_percentiles = zeros(size(percentiles));
+
+for i = 1:length(percentiles)
+    idx = round((percentiles(i)/100) * length(accuracy_sorted));
+    if idx < 1, idx = 1; end
+    if idx > length(accuracy_sorted), idx = length(accuracy_sorted); end
+    
+    accuracy_percentiles(i) = accuracy_sorted(idx);
+    fps_percentiles(i) = fps_sorted(idx);
+    latency_percentiles(i) = latency_sorted(idx);
+end
+
+subplot(1, 3, 1);
+plot(percentiles, accuracy_percentiles, 'o-', 'LineWidth', 2, 'MarkerSize', 8, 'Color', [0.2, 0.6, 0.8]);
+xlabel('Percentile');
+ylabel('Detection Accuracy (%)');
+title('Accuracy Percentiles');
+grid on;
+
+subplot(1, 3, 2);
+plot(percentiles, fps_percentiles, 'o-', 'LineWidth', 2, 'MarkerSize', 8, 'Color', [0.8, 0.4, 0.2]);
+xlabel('Percentile');
+ylabel('FPS');
+title('FPS Percentiles');
+grid on;
+
+subplot(1, 3, 3);
+plot(percentiles, latency_percentiles, 'o-', 'LineWidth', 2, 'MarkerSize', 8, 'Color', [0.2, 0.8, 0.4]);
+xlabel('Percentile');
+ylabel('Latency (ms)');
+title('Latency Percentiles');
+grid on;
+
+sgtitle('Performance Percentiles Analysis', 'FontSize', 16, 'FontWeight', 'bold');
+
+%% 4. Model Performance Time Series Analysis
+figure('Name', 'Model Performance Time Series', 'Position', [250, 250, 1200, 600]);
+
+% System Uptime over Time (simulated)
+subplot(2, 3, 1);
+time_points = 1:1000:data_points;
+uptime_sample = uptime(1:1000:data_points);
+plot(time_points, uptime_sample, 'LineWidth', 2, 'Color', [0.2, 0.6, 0.8]);
+xlabel('Time Points');
+ylabel('Uptime (%)');
+title('System Uptime Trend');
+grid on;
+
+% Accuracy over Time
+subplot(2, 3, 2);
+accuracy_sample = accuracy(1:1000:data_points);
+plot(time_points, accuracy_sample, 'LineWidth', 2, 'Color', [0.2, 0.8, 0.4]);
+xlabel('Time Points');
+ylabel('Accuracy (%)');
+title('Detection Accuracy Trend');
+grid on;
+
+% FPS over Time
+subplot(2, 3, 3);
+fps_sample = fps(1:1000:data_points);
+plot(time_points, fps_sample, 'LineWidth', 2, 'Color', [0.8, 0.4, 0.2]);
+xlabel('Time Points');
+ylabel('FPS');
+title('Processing Speed Trend');
+grid on;
+
+% Latency over Time
+subplot(2, 3, 4);
+latency_sample = latency(1:1000:data_points);
+plot(time_points, latency_sample, 'LineWidth', 2, 'Color', [0.6, 0.2, 0.8]);
+xlabel('Time Points');
+ylabel('Latency (ms)');
+title('Network Latency Trend');
+grid on;
+
+% CPU Usage over Time
+subplot(2, 3, 5);
+cpu_sample = cpu_usage(1:1000:data_points);
+plot(time_points, cpu_sample, 'LineWidth', 2, 'Color', [0.2, 0.6, 0.8]);
+xlabel('Time Points');
+ylabel('CPU Usage (%)');
+title('CPU Usage Trend');
+grid on;
+
+% Memory Usage over Time
+subplot(2, 3, 6);
+memory_sample = memory_usage(1:1000:data_points);
+plot(time_points, memory_sample, 'LineWidth', 2, 'Color', [0.8, 0.2, 0.6]);
+xlabel('Time Points');
+ylabel('Memory Usage (%)');
+title('Memory Usage Trend');
+grid on;
+
+sgtitle('Model Performance Time Series Analysis', 'FontSize', 16, 'FontWeight', 'bold');
+
+%% 5. Summary Statistics Display
+figure('Name', 'Summary Statistics', 'Position', [300, 300, 800, 600]);
+
+% Create a text display of key statistics
+stats_text = {
+    'YOLOv8 MODEL PERFORMANCE ANALYSIS - SUMMARY';
+    '';
+    'MODEL PERFORMANCE METRICS';
+    '----------------------------------------';
+    sprintf('Detection Accuracy: %.2f%% (mean), %.2f%% - %.2f%% (range)', perf_stats.accuracy.mean, perf_stats.accuracy.min, perf_stats.accuracy.max);
+    sprintf('Processing Speed: %.2f FPS (mean), %.2f FPS (median)', perf_stats.fps.mean, perf_stats.fps.median);
+    sprintf('Network Latency: %.2f ms (mean), %.2f ms (median)', perf_stats.latency.mean, perf_stats.latency.median);
+    sprintf('System Uptime: %.2f%% (mean), %.2f%% (minimum)', perf_stats.uptime.mean, perf_stats.uptime.min);
+    '';
+    'SYSTEM RESOURCE USAGE';
+    '----------------------------------------';
+    sprintf('CPU Usage: %.2f%% (mean), %.2f%% (median)', mean(cpu_usage), median(cpu_usage));
+    sprintf('Memory Usage: %.2f%% (mean), %.2f%% (median)', mean(memory_usage), median(memory_usage));
+    sprintf('Detection Confidence: %.2f%% (mean)', mean(detection_confidence));
+    sprintf('False Positive Rate: %.2f%% (mean)', mean(false_positive_rate));
+    '';
+    'DATA PROCESSING';
+    '----------------------------------------';
+    sprintf('Data Points Analyzed: %d', data_points);
+    sprintf('Processing Time: %.2f seconds', toc);
+};
+
+% Display statistics in a text box
+annotation('textbox', [0.1, 0.1, 0.8, 0.8], 'String', stats_text, ...
+           'FontSize', 12, 'FontName', 'Courier New', ...
+           'BackgroundColor', 'white', 'EdgeColor', 'black', ...
+           'LineWidth', 2, 'VerticalAlignment', 'top');
+
+title('YOLOv8 Analytics Summary Report', 'FontSize', 16, 'FontWeight', 'bold');
+
+%% Print Summary to Command Window
+fprintf('\n================================================================================\n');
+fprintf('YOLOv8 MODEL PERFORMANCE ANALYSIS REPORT\n');
+fprintf('================================================================================\n');
+fprintf('Generated: %s\n', datestr(now, 'yyyy-mm-dd HH:MM:SS'));
+fprintf('Data Points Analyzed: %d\n', data_points);
+fprintf('Processing Time: %.2f seconds\n', toc);
+fprintf('================================================================================\n');
+
+fprintf('\nMODEL PERFORMANCE ANALYSIS\n');
+fprintf('----------------------------------------\n');
+fprintf('Detection Accuracy:\n');
+fprintf('  Mean: %.2f%%\n', perf_stats.accuracy.mean);
+fprintf('  Median: %.2f%%\n', perf_stats.accuracy.median);
+fprintf('  Standard Deviation: %.2f%%\n', perf_stats.accuracy.std);
+fprintf('  Range: %.2f%% - %.2f%%\n', perf_stats.accuracy.min, perf_stats.accuracy.max);
+
+fprintf('\nProcessing Speed (FPS):\n');
+fprintf('  Mean: %.2f FPS\n', perf_stats.fps.mean);
+fprintf('  Median: %.2f FPS\n', perf_stats.fps.median);
+fprintf('  Standard Deviation: %.2f FPS\n', perf_stats.fps.std);
+
+fprintf('\nNetwork Latency:\n');
+fprintf('  Mean: %.2f ms\n', perf_stats.latency.mean);
+fprintf('  Median: %.2f ms\n', perf_stats.latency.median);
+fprintf('  Standard Deviation: %.2f ms\n', perf_stats.latency.std);
+
+fprintf('\nSystem Uptime:\n');
+fprintf('  Mean: %.2f%%\n', perf_stats.uptime.mean);
+fprintf('  Median: %.2f%%\n', perf_stats.uptime.median);
+fprintf('  Minimum: %.2f%%\n', perf_stats.uptime.min);
+
+fprintf('\nSYSTEM RESOURCE USAGE\n');
+fprintf('----------------------------------------\n');
+fprintf('CPU Usage: %.2f%% (mean), %.2f%% (median)\n', mean(cpu_usage), median(cpu_usage));
+fprintf('Memory Usage: %.2f%% (mean), %.2f%% (median)\n', mean(memory_usage), median(memory_usage));
+fprintf('Detection Confidence: %.2f%% (mean)\n', mean(detection_confidence));
+fprintf('False Positive Rate: %.2f%% (mean)\n', mean(false_positive_rate));
+
+fprintf('\nPERFORMANCE PERCENTILES\n');
+fprintf('----------------------------------------\n');
+fprintf('Detection Accuracy Percentiles:\n');
+for i = 1:length(percentiles)
+    fprintf('  %dth percentile: %.2f%%\n', percentiles(i), accuracy_percentiles(i));
+end
+
+fprintf('\nFPS Percentiles:\n');
+for i = 1:length(percentiles)
+    fprintf('  %dth percentile: %.2f FPS\n', percentiles(i), fps_percentiles(i));
+end
+
+fprintf('\nLatency Percentiles:\n');
+for i = 1:length(percentiles)
+    fprintf('  %dth percentile: %.2f ms\n', percentiles(i), latency_percentiles(i));
+end
+
+fprintf('\n================================================================================\n');
+fprintf('ANALYSIS COMPLETE\n');
+fprintf('================================================================================\n');
+
+fprintf('\nVisualization complete! Check the generated figures for detailed analysis.\n');

@@ -1,0 +1,492 @@
+{
+  "revenue_data": [
+    {
+      "date": "2023-01-01",
+      "revenue": 65082,
+      "growth_rate": 19.7
+    },
+    {
+      "date": "2023-01-31",
+      "revenue": 50105,
+      "growth_rate": 18.0
+    },
+    {
+      "date": "2023-03-02",
+      "revenue": 79740,
+      "growth_rate": 13.3
+    },
+    {
+      "date": "2023-04-01",
+      "revenue": 73969,
+      "growth_rate": 14.2
+    },
+    {
+      "date": "2023-05-01",
+      "revenue": 84411,
+      "growth_rate": 10.5
+    },
+    {
+      "date": "2023-05-31",
+      "revenue": 105352,
+      "growth_rate": 11.3
+    },
+    {
+      "date": "2023-06-30",
+      "revenue": 92232,
+      "growth_rate": 10.2
+    },
+    {
+      "date": "2023-07-30",
+      "revenue": 109069,
+      "growth_rate": 12.6
+    },
+    {
+      "date": "2023-08-29",
+      "revenue": 128019,
+      "growth_rate": 11.3
+    },
+    {
+      "date": "2023-09-28",
+      "revenue": 224239,
+      "growth_rate": 17.6
+    },
+    {
+      "date": "2023-10-28",
+      "revenue": 312396,
+      "growth_rate": 19.4
+    },
+    {
+      "date": "2023-11-27",
+      "revenue": 246501,
+      "growth_rate": 15.4
+    },
+    {
+      "date": "2023-12-27",
+      "revenue": 400436,
+      "growth_rate": 19.0
+    },
+    {
+      "date": "2024-01-26",
+      "revenue": 180246,
+      "growth_rate": 10.6
+    },
+    {
+      "date": "2024-02-25",
+      "revenue": 350581,
+      "growth_rate": 14.6
+    },
+    {
+      "date": "2024-03-26",
+      "revenue": 540233,
+      "growth_rate": 16.9
+    },
+    {
+      "date": "2024-04-25",
+      "revenue": 711988,
+      "growth_rate": 18.0
+    },
+    {
+      "date": "2024-05-25",
+      "revenue": 868409,
+      "growth_rate": 18.3
+    }
+  ],
+  "customer_acquisition": [
+    {
+      "date": "2023-01-01",
+      "new_customers": 4,
+      "total_customers": 4,
+      "churn_rate": 0.047568887129193854
+    },
+    {
+      "date": "2023-01-31",
+      "new_customers": 8,
+      "total_customers": 12,
+      "churn_rate": 0.04662279810399941
+    },
+    {
+      "date": "2023-03-02",
+      "new_customers": 7,
+      "total_customers": 19,
+      "churn_rate": 0.02196993884556398
+    },
+    {
+      "date": "2023-04-01",
+      "new_customers": 5,
+      "total_customers": 24,
+      "churn_rate": 0.02094616834298586
+    },
+    {
+      "date": "2023-05-01",
+      "new_customers": 5,
+      "total_customers": 29,
+      "churn_rate": 0.03905556853584024
+    },
+    {
+      "date": "2023-05-31",
+      "new_customers": 8,
+      "total_customers": 37,
+      "churn_rate": 0.032445779884656356
+    },
+    {
+      "date": "2023-06-30",
+      "new_customers": 9,
+      "total_customers": 46,
+      "churn_rate": 0.027469525475142448
+    },
+    {
+      "date": "2023-07-30",
+      "new_customers": 6,
+      "total_customers": 52,
+      "churn_rate": 0.03811704364650655
+    },
+    {
+      "date": "2023-08-29",
+      "new_customers": 10,
+      "total_customers": 62,
+      "churn_rate": 0.03539385947888333
+    },
+    {
+      "date": "2023-09-28",
+      "new_customers": 9,
+      "total_customers": 71,
+      "churn_rate": 0.03930754527800081
+    },
+    {
+      "date": "2023-10-28",
+      "new_customers": 9,
+      "total_customers": 80,
+      "churn_rate": 0.03391466409923104
+    },
+    {
+      "date": "2023-11-27",
+      "new_customers": 9,
+      "total_customers": 89,
+      "churn_rate": 0.04017585367630114
+    },
+    {
+      "date": "2023-12-27",
+      "new_customers": 8,
+      "total_customers": 97,
+      "churn_rate": 0.04366038279523306
+    },
+    {
+      "date": "2024-01-26",
+      "new_customers": 9,
+      "total_customers": 106,
+      "churn_rate": 0.03604383408499575
+    },
+    {
+      "date": "2024-02-25",
+      "new_customers": 14,
+      "total_customers": 120,
+      "churn_rate": 0.03593206831952783
+    },
+    {
+      "date": "2024-03-26",
+      "new_customers": 14,
+      "total_customers": 134,
+      "churn_rate": 0.03651520375754619
+    },
+    {
+      "date": "2024-04-25",
+      "new_customers": 15,
+      "total_customers": 149,
+      "churn_rate": 0.03936999257250659
+    },
+    {
+      "date": "2024-05-25",
+      "new_customers": 15,
+      "total_customers": 164,
+      "churn_rate": 0.020409245269132077
+    }
+  ],
+  "cost_savings": {
+    "labor_savings": {
+      "amount": 7954825.51547802,
+      "percentage": 45,
+      "description": "Reduced manual inventory counting"
+    },
+    "stockout_prevention": {
+      "amount": 2987504.575174344,
+      "percentage": 25,
+      "description": "Prevented lost sales from stockouts"
+    },
+    "inventory_accuracy": {
+      "amount": 1228369.9478208632,
+      "percentage": 20,
+      "description": "Reduced shrinkage and overstock"
+    },
+    "maintenance_reduction": {
+      "amount": 787657.7728604494,
+      "percentage": 10,
+      "description": "Reduced system maintenance costs"
+    }
+  },
+  "performance_metrics": {
+    "accuracy": {
+      "current": 98.6,
+      "baseline": 85.0,
+      "improvement": 14.2
+    },
+    "uptime": {
+      "current": 99.9,
+      "baseline": 95.0,
+      "improvement": 4.6
+    },
+    "processing_speed": {
+      "fps": 25,
+      "latency_ms": 198,
+      "throughput": 993
+    },
+    "scalability": {
+      "max_cameras": 94,
+      "concurrent_users": 21,
+      "locations_supported": 133
+    }
+  },
+  "roi_data": {
+    "total_investment": 23243,
+    "annual_savings": 2090935,
+    "roi_percentage": 8895.8,
+    "payback_months": 0.1,
+    "locations": 10,
+    "cost_per_location": 2324
+  },
+  "competitive_analysis": {
+    "our_solution": {
+      "deployment_time_weeks": 2,
+      "cost_per_location": 1663,
+      "accuracy_percentage": 98.9,
+      "maintenance_hours_monthly": 6,
+      "scalability_score": 92
+    },
+    "traditional_systems": {
+      "deployment_time_weeks": 20,
+      "cost_per_location": 23193,
+      "accuracy_percentage": 88.9,
+      "maintenance_hours_monthly": 33,
+      "scalability_score": 75
+    },
+    "market_alternatives": {
+      "rfid_systems": {
+        "cost_per_location": 18843,
+        "accuracy_percentage": 97.2,
+        "deployment_time_weeks": 15
+      },
+      "barcode_systems": {
+        "cost_per_location": 8382,
+        "accuracy_percentage": 80.9,
+        "deployment_time_weeks": 8
+      }
+    }
+  },
+  "customer_feedback": [
+    {
+      "customer_id": "CUST_001",
+      "industry": "Manufacturing",
+      "locations": 5,
+      "satisfaction_score": 4.5,
+      "feedback": "Reduced labor costs significantly",
+      "months_using": 5,
+      "annual_savings": 176380
+    },
+    {
+      "customer_id": "CUST_002",
+      "industry": "Restaurant",
+      "locations": 3,
+      "satisfaction_score": 4.8,
+      "feedback": "Better visibility into inventory levels",
+      "months_using": 17,
+      "annual_savings": 290143
+    },
+    {
+      "customer_id": "CUST_003",
+      "industry": "Retail",
+      "locations": 5,
+      "satisfaction_score": 4.7,
+      "feedback": "Reduced inventory counting time by 80%",
+      "months_using": 17,
+      "annual_savings": 141225
+    },
+    {
+      "customer_id": "CUST_004",
+      "industry": "Retail",
+      "locations": 10,
+      "satisfaction_score": 4.5,
+      "feedback": "Easy to deploy and maintain",
+      "months_using": 2,
+      "annual_savings": 200843
+    },
+    {
+      "customer_id": "CUST_005",
+      "industry": "Retail",
+      "locations": 1,
+      "satisfaction_score": 4.5,
+      "feedback": "ROI achieved in 2.5 months",
+      "months_using": 7,
+      "annual_savings": 273934
+    },
+    {
+      "customer_id": "CUST_006",
+      "industry": "Manufacturing",
+      "locations": 2,
+      "satisfaction_score": 4.9,
+      "feedback": "ROI achieved in 2.5 months",
+      "months_using": 8,
+      "annual_savings": 225363
+    },
+    {
+      "customer_id": "CUST_007",
+      "industry": "Warehouse",
+      "locations": 9,
+      "satisfaction_score": 4.6,
+      "feedback": "Better visibility into inventory levels",
+      "months_using": 17,
+      "annual_savings": 252487
+    },
+    {
+      "customer_id": "CUST_008",
+      "industry": "Warehouse",
+      "locations": 3,
+      "satisfaction_score": 4.3,
+      "feedback": "Easy to deploy and maintain",
+      "months_using": 17,
+      "annual_savings": 458717
+    },
+    {
+      "customer_id": "CUST_009",
+      "industry": "Retail",
+      "locations": 8,
+      "satisfaction_score": 4.3,
+      "feedback": "Prevented 3 major stockouts this quarter",
+      "months_using": 2,
+      "annual_savings": 478631
+    },
+    {
+      "customer_id": "CUST_010",
+      "industry": "Retail",
+      "locations": 2,
+      "satisfaction_score": 4.8,
+      "feedback": "Prevented 3 major stockouts this quarter",
+      "months_using": 5,
+      "annual_savings": 352813
+    },
+    {
+      "customer_id": "CUST_011",
+      "industry": "Retail",
+      "locations": 3,
+      "satisfaction_score": 4.4,
+      "feedback": "Reduced labor costs significantly",
+      "months_using": 6,
+      "annual_savings": 349690
+    },
+    {
+      "customer_id": "CUST_012",
+      "industry": "Manufacturing",
+      "locations": 9,
+      "satisfaction_score": 4.8,
+      "feedback": "Real-time alerts are game-changing",
+      "months_using": 3,
+      "annual_savings": 160581
+    },
+    {
+      "customer_id": "CUST_013",
+      "industry": "Warehouse",
+      "locations": 8,
+      "satisfaction_score": 4.5,
+      "feedback": "Easy to deploy and maintain",
+      "months_using": 12,
+      "annual_savings": 480922
+    },
+    {
+      "customer_id": "CUST_014",
+      "industry": "Warehouse",
+      "locations": 5,
+      "satisfaction_score": 4.3,
+      "feedback": "Easy to deploy and maintain",
+      "months_using": 1,
+      "annual_savings": 114295
+    },
+    {
+      "customer_id": "CUST_015",
+      "industry": "Restaurant",
+      "locations": 6,
+      "satisfaction_score": 4.3,
+      "feedback": "Real-time alerts are game-changing",
+      "months_using": 15,
+      "annual_savings": 476467
+    },
+    {
+      "customer_id": "CUST_016",
+      "industry": "Manufacturing",
+      "locations": 4,
+      "satisfaction_score": 4.6,
+      "feedback": "Reduced labor costs significantly",
+      "months_using": 7,
+      "annual_savings": 102864
+    },
+    {
+      "customer_id": "CUST_017",
+      "industry": "Retail",
+      "locations": 1,
+      "satisfaction_score": 4.9,
+      "feedback": "Reduced inventory counting time by 80%",
+      "months_using": 2,
+      "annual_savings": 212901
+    },
+    {
+      "customer_id": "CUST_018",
+      "industry": "Warehouse",
+      "locations": 10,
+      "satisfaction_score": 4.3,
+      "feedback": "Reduced inventory counting time by 80%",
+      "months_using": 5,
+      "annual_savings": 422537
+    },
+    {
+      "customer_id": "CUST_019",
+      "industry": "Restaurant",
+      "locations": 5,
+      "satisfaction_score": 4.4,
+      "feedback": "Easy to deploy and maintain",
+      "months_using": 14,
+      "annual_savings": 165994
+    },
+    {
+      "customer_id": "CUST_020",
+      "industry": "Restaurant",
+      "locations": 2,
+      "satisfaction_score": 4.8,
+      "feedback": "Reduced inventory counting time by 80%",
+      "months_using": 10,
+      "annual_savings": 353787
+    }
+  ],
+  "market_data": {
+    "total_addressable_market": {
+      "value_billions": 2.8,
+      "growth_rate_percent": 12.5,
+      "description": "Global inventory management software market"
+    },
+    "serviceable_addressable_market": {
+      "value_billions": 0.8,
+      "growth_rate_percent": 15.2,
+      "description": "Real-time inventory monitoring segment"
+    },
+    "serviceable_obtainable_market": {
+      "value_millions": 120,
+      "growth_rate_percent": 25.0,
+      "description": "AI-powered inventory solutions"
+    },
+    "market_trends": [
+      "Increasing demand for automation",
+      "Rising labor costs driving efficiency needs",
+      "COVID-19 accelerating digital transformation",
+      "AI/ML becoming mainstream in business",
+      "Edge computing reducing latency requirements"
+    ]
+  },
+  "generated_at": "2025-10-07T12:23:06.799440",
+  "data_version": "1.0"
+}
