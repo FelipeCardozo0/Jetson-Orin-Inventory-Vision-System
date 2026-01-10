@@ -4,7 +4,7 @@ Get the Poke Bowl Inventory System running in **under 10 minutes** (after depend
 
 ---
 
-## ⚡ Super Quick Start (Already Configured Jetson)
+## Quick Start (Already Configured Jetson)
 
 If your Jetson already has JetPack 6.x and dependencies installed:
 
@@ -15,11 +15,9 @@ python3 main.py
 
 Open browser: `http://localhost:8080`
 
-Done! 🎉
-
 ---
 
-## 🚀 First-Time Setup (Fresh Jetson)
+## First-Time Setup (Fresh Jetson)
 
 ### Step 1: Clone Repository
 ```bash
@@ -35,13 +33,13 @@ bash setup_jetson.sh
 ```
 
 This script will:
-- ✅ Update system packages
-- ✅ Install system dependencies
-- ✅ Install PyTorch (Jetson-optimized)
-- ✅ Install Python packages
-- ✅ Configure Jetson for max performance
-- ✅ Test camera
-- ✅ Verify all components
+- Update system packages
+- Install system dependencies
+- Install PyTorch (Jetson-optimized)
+- Install Python packages
+- Configure Jetson for max performance
+- Test camera
+- Verify all components
 
 **Time**: ~15-30 minutes (depending on internet speed)
 
@@ -90,7 +88,7 @@ After reboot, the system should automatically start and display on the HDMI moni
 
 ---
 
-## 🎯 Manual Installation (Step-by-Step)
+## Manual Installation (Step-by-Step)
 
 If you prefer manual control:
 
@@ -130,7 +128,7 @@ bash quick_test.sh
 
 ---
 
-## 🔧 Configuration
+## Configuration
 
 ### Quick Tweaks
 
@@ -169,7 +167,7 @@ stream:
 
 ---
 
-## 📱 Accessing from Different Devices
+## Accessing from Different Devices
 
 ### Same Device
 ```
@@ -186,7 +184,7 @@ After running `setup_autostart.sh`, Chromium will automatically open fullscreen 
 
 ---
 
-## 🛠️ Common Commands
+## Common Commands
 
 ### Start System
 ```bash
@@ -227,7 +225,7 @@ sudo systemctl restart pokebowl-inventory
 
 ---
 
-## 🐛 Quick Troubleshooting
+## Quick Troubleshooting
 
 ### Problem: Camera not found
 ```bash
@@ -283,7 +281,7 @@ python3 main.py
 
 ---
 
-## 📊 Performance Tips
+## Performance Tips
 
 ### Maximum Performance Mode
 ```bash
@@ -325,7 +323,7 @@ stream:
 
 ---
 
-## 🎓 Next Steps
+## Next Steps
 
 After getting the system running:
 
@@ -337,7 +335,7 @@ After getting the system running:
 
 ---
 
-## 📞 Getting Help
+## Getting Help
 
 1. Check logs: `sudo journalctl -u pokebowl-inventory -f`
 2. Run system test: `bash deployment/quick_test.sh`
@@ -346,5 +344,5 @@ After getting the system running:
 
 ---
 
-**That's it!** You should now have a fully functional real-time inventory system running on your Jetson. 🚀
+The system should now be running and accessible via the web interface.
 

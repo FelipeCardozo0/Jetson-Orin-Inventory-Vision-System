@@ -337,6 +337,57 @@ Press `Ctrl+C` to stop the application.
 
 ---
 
+## Web Interface
+
+The system provides a production-grade web interface accessible at `http://localhost:8080` (or the Jetson's IP address on the network).
+
+### Features
+
+**Live Video Feed**
+- Real-time camera stream with YOLO detection overlays
+- Bounding boxes and labels for detected products
+- Automatic reconnection if stream interrupted
+
+**Inventory Display**
+- Real-time product counts per class
+- Sorted by count (highest first)
+- Total items summary
+
+**Product Freshness Tracking**
+- Tracks age for 6 products: passion fruit, maui custard, lemon cake, mango, watermelon, pineapple
+- Displays days since first detection
+- Visual indicators: gray for fresh, red for expired (5+ days)
+- Format: "Fresh - X days old" or "EXPIRED (X days old)"
+
+**Sales Log**
+- Automatic detection of inventory decreases
+- Records sales events at 5-second intervals
+- Timestamps in US Eastern Time (EST)
+- Chronological order (newest first)
+- Persistent during session
+
+**Diagnostics Panel**
+- Hidden by default (click "Diagnostics" button to show)
+- Displays: FPS, inference time, frames processed, active connections
+- Located in top-right corner
+
+### Access
+
+**Local Access**
+- `http://localhost:8080` - From the Jetson device
+
+**Network Access**
+- `http://<jetson-ip>:8080` - From any device on the same network
+- Find Jetson IP: `hostname -I`
+
+**Browser Compatibility**
+- Chrome/Edge (recommended)
+- Safari
+- Firefox
+- Modern browsers with WebSocket support
+
+---
+
 ## Monitoring and Debugging
 
 ### View Logs

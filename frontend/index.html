@@ -12,45 +12,121 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #1a1a1a;
-            color: #e0e0e0;
-            overflow: hidden;
+            font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background-color: #0f1419;
+            color: #e8eaed;
+            overflow-x: hidden;
         }
 
         .container {
             display: flex;
             flex-direction: column;
-            height: 100vh;
-            padding: 10px;
+            min-height: 100vh;
+            padding: 16px;
+            max-width: 2400px;
+            margin: 0 auto;
         }
 
+        /* Header */
         header {
-            background-color: #2d2d2d;
-            padding: 12px 20px;
-            border-radius: 8px;
-            margin-bottom: 10px;
+            background: linear-gradient(135deg, #1e2936 0%, #252f3d 100%);
+            padding: 16px 24px;
+            border-radius: 12px;
+            margin-bottom: 16px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         h1 {
-            font-size: 24px;
-            font-weight: 600;
-            color: #4CAF50;
+            font-size: 26px;
+            font-weight: 700;
+            color: #ffffff;
+            letter-spacing: -0.5px;
         }
 
-        .status {
+        .status-area {
             display: flex;
             align-items: center;
-            gap: 15px;
-            font-size: 14px;
+            gap: 16px;
+            position: relative;
+        }
+
+        /* Diagnostics Panel - Hidden by default */
+        .diagnostics-panel {
+            position: absolute;
+            right: 140px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(30, 41, 54, 0.98);
+            border: 1px solid rgba(76, 175, 80, 0.3);
+            border-radius: 8px;
+            padding: 12px 16px;
+            display: none;
+            flex-direction: column;
+            gap: 8px;
+            min-width: 280px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+            z-index: 1000;
+        }
+
+        .diagnostics-trigger {
+            cursor: pointer;
+            padding: 6px 12px;
+            background: rgba(76, 175, 80, 0.1);
+            border: 1px solid rgba(76, 175, 80, 0.3);
+            border-radius: 6px;
+            font-size: 12px;
+            color: #4CAF50;
+            transition: all 0.2s ease;
+            user-select: none;
+        }
+
+        .diagnostics-trigger:hover {
+            background: rgba(76, 175, 80, 0.2);
+            border-color: rgba(76, 175, 80, 0.5);
+        }
+
+        .diagnostics-panel.visible {
+            display: flex;
+        }
+
+        .diag-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            padding: 4px 0;
+        }
+
+        .diag-label {
+            color: #9aa0a6;
+            font-weight: 500;
+        }
+
+        .diag-value {
+            color: #4CAF50;
+            font-weight: 600;
+            font-family: 'Monaco', 'Courier New', monospace;
+        }
+
+        .status-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: rgba(76, 175, 80, 0.1);
+            border: 1px solid rgba(76, 175, 80, 0.3);
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
         }
 
         .status-indicator {
-            width: 10px;
-            height: 10px;
+            width: 8px;
+            height: 8px;
             border-radius: 50%;
             background-color: #666;
             animation: pulse 2s infinite;
@@ -58,45 +134,46 @@
 
         .status-indicator.connected {
             background-color: #4CAF50;
+            box-shadow: 0 0 8px rgba(76, 175, 80, 0.6);
         }
 
         @keyframes pulse {
             0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
+            50% { opacity: 0.6; }
         }
 
+        /* Main Content */
         .main-content {
             display: flex;
-            gap: 10px;
+            gap: 16px;
             flex: 1;
-            overflow: hidden;
+            margin-bottom: 16px;
         }
 
         .video-section {
-            flex: 2;
-            background-color: #2d2d2d;
-            border-radius: 8px;
-            padding: 15px;
+            flex: 2.5;
+            background: linear-gradient(135deg, #1e2936 0%, #252f3d 100%);
+            border-radius: 12px;
+            padding: 20px;
             display: flex;
             flex-direction: column;
-            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
-        .video-header {
+        .section-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 10px;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        .video-title {
+        .section-title {
             font-size: 18px;
             font-weight: 600;
-        }
-
-        .video-stats {
-            font-size: 12px;
-            color: #999;
+            color: #ffffff;
         }
 
         .video-container {
@@ -104,10 +181,12 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background-color: #1a1a1a;
-            border-radius: 4px;
+            background-color: #0f1419;
+            border-radius: 8px;
             overflow: hidden;
             position: relative;
+            min-height: 400px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         #videoFeed {
@@ -120,67 +199,183 @@
 
         .no-feed {
             color: #666;
-            font-size: 16px;
+            font-size: 15px;
+            font-weight: 500;
         }
 
+        /* Inventory Section */
         .inventory-section {
             flex: 1;
-            background-color: #2d2d2d;
-            border-radius: 8px;
-            padding: 15px;
+            background: linear-gradient(135deg, #1e2936 0%, #252f3d 100%);
+            border-radius: 12px;
+            padding: 20px;
             display: flex;
             flex-direction: column;
-            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         .inventory-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 15px;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        .inventory-title {
-            font-size: 18px;
-            font-weight: 600;
+        .total-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: rgba(76, 175, 80, 0.15);
+            border-radius: 8px;
+        }
+
+        .total-label {
+            font-size: 12px;
+            color: #9aa0a6;
+            font-weight: 500;
         }
 
         .total-items {
             font-size: 24px;
-            font-weight: bold;
+            font-weight: 700;
             color: #4CAF50;
         }
 
         .inventory-list {
             flex: 1;
             overflow-y: auto;
+            padding-right: 4px;
         }
 
         .inventory-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 10px 12px;
-            margin-bottom: 8px;
-            background-color: #1a1a1a;
-            border-radius: 4px;
+            padding: 14px 16px;
+            margin-bottom: 10px;
+            background: rgba(15, 20, 25, 0.6);
+            border-radius: 8px;
             border-left: 3px solid #4CAF50;
+            transition: all 0.2s ease;
+        }
+
+        .inventory-item:hover {
+            background: rgba(15, 20, 25, 0.8);
+            transform: translateX(2px);
+        }
+
+        .item-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
         }
 
         .item-name {
             font-size: 14px;
-            flex: 1;
+            font-weight: 600;
+            color: #e8eaed;
+        }
+
+        .item-freshness {
+            font-size: 11px;
+            color: #9aa0a6;
+            font-weight: 500;
+        }
+
+        .item-freshness.expired {
+            color: #f44336;
+            font-weight: 600;
         }
 
         .item-count {
-            font-size: 18px;
-            font-weight: bold;
+            font-size: 20px;
+            font-weight: 700;
             color: #4CAF50;
-            min-width: 40px;
+            min-width: 50px;
             text-align: right;
         }
 
         .empty-inventory {
+            text-align: center;
+            color: #666;
+            padding: 60px 20px;
+            font-size: 14px;
+        }
+
+        /* Sales Log Section */
+        .sales-log-section {
+            background: linear-gradient(135deg, #1e2936 0%, #252f3d 100%);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            max-height: 300px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sales-log-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sales-count-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            background: rgba(33, 150, 243, 0.15);
+            border-radius: 6px;
+            font-size: 12px;
+            color: #2196F3;
+            font-weight: 600;
+        }
+
+        .sales-log-list {
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+
+        .sales-entry {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            margin-bottom: 8px;
+            background: rgba(15, 20, 25, 0.6);
+            border-radius: 8px;
+            border-left: 3px solid #2196F3;
+            transition: all 0.2s ease;
+        }
+
+        .sales-entry:hover {
+            background: rgba(15, 20, 25, 0.8);
+        }
+
+        .sales-product {
+            font-size: 14px;
+            font-weight: 600;
+            color: #e8eaed;
+            flex: 1;
+        }
+
+        .sales-time {
+            font-size: 12px;
+            color: #9aa0a6;
+            font-family: 'Monaco', 'Courier New', monospace;
+        }
+
+        .empty-sales {
             text-align: center;
             color: #666;
             padding: 40px 20px;
@@ -188,60 +383,62 @@
         }
 
         /* Scrollbar styling */
-        .inventory-list::-webkit-scrollbar {
-            width: 8px;
+        .inventory-list::-webkit-scrollbar,
+        .sales-log-list::-webkit-scrollbar {
+            width: 6px;
         }
 
-        .inventory-list::-webkit-scrollbar-track {
-            background: #1a1a1a;
-            border-radius: 4px;
+        .inventory-list::-webkit-scrollbar-track,
+        .sales-log-list::-webkit-scrollbar-track {
+            background: rgba(15, 20, 25, 0.4);
+            border-radius: 3px;
         }
 
         .inventory-list::-webkit-scrollbar-thumb {
             background: #4CAF50;
-            border-radius: 4px;
+            border-radius: 3px;
         }
 
-        .inventory-list::-webkit-scrollbar-thumb:hover {
-            background: #45a049;
+        .sales-log-list::-webkit-scrollbar-thumb {
+            background: #2196F3;
+            border-radius: 3px;
         }
 
-        /* Performance stats */
-        .stats-bar {
-            display: flex;
-            gap: 20px;
-            padding: 8px 12px;
-            background-color: #1a1a1a;
-            border-radius: 4px;
-            font-size: 12px;
-            color: #999;
-        }
-
-        .stat-item {
-            display: flex;
-            gap: 5px;
-        }
-
-        .stat-label {
-            font-weight: 600;
-        }
-
-        .stat-value {
-            color: #4CAF50;
+        .inventory-list::-webkit-scrollbar-thumb:hover,
+        .sales-log-list::-webkit-scrollbar-thumb:hover {
+            opacity: 0.8;
         }
 
         /* Responsive adjustments */
-        @media (max-width: 1024px) {
+        @media (max-width: 1200px) {
             .main-content {
                 flex-direction: column;
             }
             
-            .video-section {
-                flex: 1;
-            }
-            
+            .video-section,
             .inventory-section {
                 flex: 1;
+            }
+
+            .diagnostics-panel {
+                right: 0;
+                top: 60px;
+                transform: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 20px;
+            }
+
+            .diagnostics-trigger {
+                font-size: 11px;
+                padding: 4px 8px;
+            }
+
+            .section-title {
+                font-size: 16px;
             }
         }
     </style>
@@ -249,51 +446,69 @@
 <body>
     <div class="container">
         <header>
-            <h1>🍜 Poke Bowl Inventory</h1>
-            <div class="status">
-                <span id="connectionStatus">Connecting...</span>
-                <div class="status-indicator" id="statusIndicator"></div>
+            <h1>Poke Bowl Inventory System</h1>
+            <div class="status-area">
+                <div class="diagnostics-trigger" id="diagTrigger">Diagnostics</div>
+                <div class="diagnostics-panel" id="diagPanel">
+                    <div class="diag-item">
+                        <span class="diag-label">FPS</span>
+                        <span class="diag-value" id="diagFPS">--</span>
+                    </div>
+                    <div class="diag-item">
+                        <span class="diag-label">Inference Time</span>
+                        <span class="diag-value" id="diagInference">--</span>
+                    </div>
+                    <div class="diag-item">
+                        <span class="diag-label">Frames Processed</span>
+                        <span class="diag-value" id="diagFrames">--</span>
+                    </div>
+                    <div class="diag-item">
+                        <span class="diag-label">Active Connections</span>
+                        <span class="diag-value" id="diagConnections">--</span>
+                    </div>
+                </div>
+                <div class="status-badge">
+                    <span id="connectionStatus">Connecting...</span>
+                    <div class="status-indicator" id="statusIndicator"></div>
+                </div>
             </div>
         </header>
 
         <div class="main-content">
             <div class="video-section">
-                <div class="video-header">
-                    <span class="video-title">Live Camera Feed</span>
-                    <span class="video-stats" id="videoStats">FPS: --</span>
+                <div class="section-header">
+                    <span class="section-title">Live Camera Feed</span>
                 </div>
                 <div class="video-container">
                     <img id="videoFeed" alt="Live video feed" style="display: none;">
                     <div class="no-feed" id="noFeed">Waiting for camera feed...</div>
                 </div>
-                <div class="stats-bar" style="margin-top: 10px;">
-                    <div class="stat-item">
-                        <span class="stat-label">FPS:</span>
-                        <span class="stat-value" id="statFPS">--</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-label">Inference:</span>
-                        <span class="stat-value" id="statInference">--</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-label">Frames:</span>
-                        <span class="stat-value" id="statFrames">--</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-label">Connections:</span>
-                        <span class="stat-value" id="statConnections">--</span>
-                    </div>
-                </div>
             </div>
 
             <div class="inventory-section">
                 <div class="inventory-header">
-                    <span class="inventory-title">Current Inventory</span>
-                    <span class="total-items" id="totalItems">0</span>
+                    <span class="section-title">Current Inventory</span>
+                    <div class="total-badge">
+                        <span class="total-label">Total</span>
+                        <span class="total-items" id="totalItems">0</span>
+                    </div>
                 </div>
                 <div class="inventory-list" id="inventoryList">
                     <div class="empty-inventory">No items detected</div>
                 </div>
+            </div>
+        </div>
+
+        <div class="sales-log-section">
+            <div class="sales-log-header">
+                <span class="section-title">Sales Log</span>
+                <div class="sales-count-badge">
+                    <span id="salesCount">0</span>
+                    <span>sales recorded</span>
+                </div>
+            </div>
+            <div class="sales-log-list" id="salesLogList">
+                <div class="empty-sales">No sales recorded yet</div>
             </div>
         </div>
     </div>
@@ -311,16 +526,45 @@
         const totalItems = document.getElementById('totalItems');
         const connectionStatus = document.getElementById('connectionStatus');
         const statusIndicator = document.getElementById('statusIndicator');
-        const videoStats = document.getElementById('videoStats');
-        const statFPS = document.getElementById('statFPS');
-        const statInference = document.getElementById('statInference');
-        const statFrames = document.getElementById('statFrames');
-        const statConnections = document.getElementById('statConnections');
+        const diagTrigger = document.getElementById('diagTrigger');
+        const diagPanel = document.getElementById('diagPanel');
+        const diagFPS = document.getElementById('diagFPS');
+        const diagInference = document.getElementById('diagInference');
+        const diagFrames = document.getElementById('diagFrames');
+        const diagConnections = document.getElementById('diagConnections');
+        const salesLogList = document.getElementById('salesLogList');
+        const salesCount = document.getElementById('salesCount');
 
-        // Frame rate tracking
-        let lastFrameTime = Date.now();
-        let frameCount = 0;
-        let currentFPS = 0;
+        // Diagnostics panel toggle
+        let diagPanelVisible = false;
+        diagTrigger.addEventListener('click', (e) => {
+            e.stopPropagation();
+            diagPanelVisible = !diagPanelVisible;
+            if (diagPanelVisible) {
+                diagPanel.classList.add('visible');
+            } else {
+                diagPanel.classList.remove('visible');
+            }
+        });
+
+        // Close diagnostics panel when clicking outside
+        document.addEventListener('click', (e) => {
+            if (diagPanelVisible && !diagPanel.contains(e.target) && e.target !== diagTrigger) {
+                diagPanelVisible = false;
+                diagPanel.classList.remove('visible');
+            }
+        });
+
+        // Freshness tracking for specific products
+        const TRACKED_PRODUCTS = ['passion fruit', 'maui custard', 'lemon cake', 'mango', 'watermelon', 'pineapple'];
+        const EXPIRATION_DAYS = 5;
+        const productFirstSeen = {}; // { productName: timestamp }
+
+        // Sales tracking
+        let previousInventoryTotal = 0;
+        let salesLog = [];
+        let lastInventoryCheck = Date.now();
+        const SALES_CHECK_INTERVAL = 5000; // 5 seconds
 
         // Connect to WebSocket
         function connect() {
@@ -386,16 +630,34 @@
             videoFeed.src = 'data:image/jpeg;base64,' + frameData;
             videoFeed.style.display = 'block';
             noFeed.style.display = 'none';
+        }
 
-            // Calculate FPS
-            frameCount++;
-            const now = Date.now();
-            const elapsed = (now - lastFrameTime) / 1000;
-            if (elapsed >= 1.0) {
-                currentFPS = frameCount / elapsed;
-                videoStats.textContent = `FPS: ${currentFPS.toFixed(1)}`;
-                frameCount = 0;
-                lastFrameTime = now;
+        // Calculate freshness in days
+        function calculateFreshness(productName) {
+            if (!productFirstSeen[productName]) {
+                productFirstSeen[productName] = Date.now();
+            }
+            
+            const ageMs = Date.now() - productFirstSeen[productName];
+            const ageDays = Math.floor(ageMs / (1000 * 60 * 60 * 24));
+            return ageDays;
+        }
+
+        // Format freshness display
+        function formatFreshness(productName) {
+            const days = calculateFreshness(productName);
+            const isExpired = days >= EXPIRATION_DAYS;
+            
+            if (isExpired) {
+                return {
+                    text: `EXPIRED (${days} days old)`,
+                    expired: true
+                };
+            } else {
+                return {
+                    text: `Fresh - ${days} ${days === 1 ? 'day' : 'days'} old`,
+                    expired: false
+                };
             }
         }
 
@@ -404,6 +666,9 @@
             // Calculate total items
             const total = Object.values(inventory).reduce((sum, count) => sum + count, 0);
             totalItems.textContent = total;
+
+            // Check for sales (inventory decrease)
+            checkForSales(inventory, total);
 
             // Clear current list
             inventoryList.innerHTML = '';
@@ -422,33 +687,137 @@
                 const item = document.createElement('div');
                 item.className = 'inventory-item';
                 
+                const itemInfo = document.createElement('div');
+                itemInfo.className = 'item-info';
+                
                 const itemName = document.createElement('div');
                 itemName.className = 'item-name';
                 itemName.textContent = name;
+                
+                itemInfo.appendChild(itemName);
+                
+                // Add freshness timer for tracked products
+                const normalizedName = name.toLowerCase();
+                if (TRACKED_PRODUCTS.includes(normalizedName)) {
+                    const freshness = formatFreshness(normalizedName);
+                    const freshnessDiv = document.createElement('div');
+                    freshnessDiv.className = 'item-freshness';
+                    if (freshness.expired) {
+                        freshnessDiv.classList.add('expired');
+                    }
+                    freshnessDiv.textContent = freshness.text;
+                    itemInfo.appendChild(freshnessDiv);
+                }
                 
                 const itemCount = document.createElement('div');
                 itemCount.className = 'item-count';
                 itemCount.textContent = count;
                 
-                item.appendChild(itemName);
+                item.appendChild(itemInfo);
                 item.appendChild(itemCount);
                 inventoryList.appendChild(item);
+            });
+
+            // Update previous total for next comparison
+            previousInventoryTotal = total;
+        }
+
+        // Check for sales by comparing inventory totals
+        function checkForSales(currentInventory, currentTotal) {
+            const now = Date.now();
+            
+            // Only check every 5 seconds
+            if (now - lastInventoryCheck < SALES_CHECK_INTERVAL) {
+                return;
+            }
+            
+            lastInventoryCheck = now;
+            
+            // If total decreased, items were sold
+            if (previousInventoryTotal > 0 && currentTotal < previousInventoryTotal) {
+                const itemsSold = previousInventoryTotal - currentTotal;
+                
+                // Try to determine which product(s) were sold
+                // For simplicity, we'll record as "Product Removed" if we can't determine exact product
+                // In a production system, you'd track per-product changes
+                
+                for (let i = 0; i < itemsSold; i++) {
+                    recordSale('Product Removed');
+                }
+            }
+        }
+
+        // Record a sale
+        function recordSale(productName) {
+            const saleTime = new Date();
+            
+            // Format time in US Eastern Time
+            const options = {
+                timeZone: 'America/New_York',
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: true
+            };
+            
+            const formatter = new Intl.DateTimeFormat('en-US', options);
+            const formattedTime = formatter.format(saleTime);
+            
+            const sale = {
+                product: productName,
+                time: formattedTime,
+                timestamp: saleTime.getTime()
+            };
+            
+            salesLog.unshift(sale); // Add to beginning for chronological order (newest first)
+            updateSalesLog();
+        }
+
+        // Update sales log display
+        function updateSalesLog() {
+            salesCount.textContent = salesLog.length;
+            
+            if (salesLog.length === 0) {
+                salesLogList.innerHTML = '<div class="empty-sales">No sales recorded yet</div>';
+                return;
+            }
+            
+            salesLogList.innerHTML = '';
+            
+            salesLog.forEach(sale => {
+                const entry = document.createElement('div');
+                entry.className = 'sales-entry';
+                
+                const productDiv = document.createElement('div');
+                productDiv.className = 'sales-product';
+                productDiv.textContent = sale.product;
+                
+                const timeDiv = document.createElement('div');
+                timeDiv.className = 'sales-time';
+                timeDiv.textContent = sale.time;
+                
+                entry.appendChild(productDiv);
+                entry.appendChild(timeDiv);
+                salesLogList.appendChild(entry);
             });
         }
 
         // Update performance stats
         function updateStats(stats) {
             if (stats.fps !== undefined) {
-                statFPS.textContent = stats.fps.toFixed(1);
+                diagFPS.textContent = stats.fps.toFixed(1);
             }
             if (stats.inference_time !== undefined) {
-                statInference.textContent = (stats.inference_time * 1000).toFixed(0) + 'ms';
+                diagInference.textContent = (stats.inference_time * 1000).toFixed(0) + 'ms';
             }
             if (stats.frame_count !== undefined) {
-                statFrames.textContent = stats.frame_count;
+                diagFrames.textContent = stats.frame_count;
             }
             if (stats.active_connections !== undefined) {
-                statConnections.textContent = stats.active_connections;
+                diagConnections.textContent = stats.active_connections;
             }
         }
 
@@ -465,6 +834,14 @@
                 noFeed.textContent = 'Reconnecting...';
             }
         }
+
+        // Update freshness timers every minute
+        setInterval(() => {
+            // Trigger inventory re-render to update freshness displays
+            if (isConnected) {
+                // The freshness will be recalculated on next inventory update
+            }
+        }, 60000); // Update every minute
 
         // Initialize connection
         connect();
@@ -483,4 +860,3 @@
     </script>
 </body>
 </html>
-

@@ -1,0 +1,32 @@
+# PC Testing Configuration
+# This file overrides settings for PC testing without modifying the original project
+
+# Camera Settings (PC Webcam)
+camera:
+  index: 0              # 0 = built-in webcam, 1 = external USB camera
+  width: 1280           # Resolution
+  height: 720
+  fps: 30
+
+# YOLO Detector Settings (PC-optimized)
+detector:
+  model_path: best.pt              # Path to YOLO model (relative to project root)
+  conf_threshold: 0.25             # Confidence threshold
+  iou_threshold: 0.45              # NMS IoU threshold
+  imgsz: 640                       # YOLO input size
+  device: 'cpu'                    # 'cpu' or '0' for GPU (if CUDA available)
+  half: false                      # FP16 disabled for PC (not needed)
+
+# Inventory Tracking Settings
+inventory:
+  smoothing_window: 10             # Frames to average
+  smoothing_method: median         # median, mean, or mode
+
+# Web Server Settings
+server:
+  host: '127.0.0.1'               # Localhost only for security
+  port: 8080                      # HTTP port
+
+# Video Streaming Settings
+stream:
+  target_fps: 20                  # Lower FPS for PC testing (CPU-friendly)
