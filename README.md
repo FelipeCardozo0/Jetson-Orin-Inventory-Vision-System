@@ -762,12 +762,22 @@ results = model.train(
  sudo ufw allow 8080 # Web interface (or your custom port)
  ```
 
+### Authentication
+
+The system includes secure session-based authentication (see [Authentication](#authentication) section above) with:
+- Bcrypt password hashing
+- HttpOnly cookies with SameSite protection
+- HMAC-signed session tokens
+- 24-hour session TTL
+- HTTPS proxy support
+
 ### Current Security Status
 
 - HTTP-based communication (no SSL by default)
-- No authentication layer
+- Secure session-based authentication enabled by default
 - Binds to all network interfaces by default
 - Suitable for isolated networks or development environments
+- HTTPS recommended for production deployments
 
 ---
 
@@ -843,10 +853,9 @@ For issues, questions, or feature requests:
 ### Additional Documentation
 
 - **QUICKSTART.md** - Fast setup instructions
-- **ARCHITECTURE.md** - Technical architecture details
+- **ARCHITECTURE.md** - Technical architecture and implementation details
 - **DEPLOYMENT_CHECKLIST.md** - Production deployment guide
-- **PERSISTENCE_GUIDE.md** - Data persistence and database management
-- **STEP2_SALES_ATTRIBUTION_COMPLETE.md** - Per-product sales attribution guide
+- **Testing On Pc/README.md** - PC testing and development guide
 - **PROJECT_STATUS_REPORT.md** - Comprehensive project status and analysis
 
 ---
@@ -867,6 +876,24 @@ Built for restaurant inventory management and real-time product tracking.
 
 ## Changelog
 
+### Version 2.1 (January 2026)
+
+- **Step 4: Authentication** - Secure session-based login system with bcrypt password hashing
+- HttpOnly cookies with SameSite protection
+- Modern login interface
+- Protected routes and WebSocket connections
+- Environment-based authentication configuration
+
+### Version 2.0 (January 2026)
+
+- **Step 3: Alerts & Notifications** - Low stock and expiration alerts with email notifications
+- **Step 2: Per-Product Sales Attribution** - SKU-specific sales detection with temporal validation
+- **Step 1: Data Persistence** - SQLite database with WAL mode, state restoration, and retention
+- Product freshness tracking with 5-day expiration monitoring
+- Automated sales log with EST timestamps
+- Database persistence for inventory snapshots, sales, and alerts
+- Performance: Zero impact (0% FPS degradation)
+
 ### Version 1.0.0 (January 2026)
 
 - Initial production release
@@ -875,8 +902,7 @@ Built for restaurant inventory management and real-time product tracking.
 - Temporal smoothing for inventory stability
 - Auto-start systemd service integration
 - Chromium kiosk mode support
-- Comprehensive documentation suite
-- Automated deployment scripts
+- Professional web interface
 
 ---
 
