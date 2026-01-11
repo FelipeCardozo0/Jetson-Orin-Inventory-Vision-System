@@ -23,16 +23,8 @@ class PersistentInventoryTracker(InventoryTracker):
     """
     
     # Products to track for freshness (configurable)
-    FRESHNESS_TRACKED_PRODUCTS = [
-        'passion fruit',
-        'island passion fruit',
-        'maui custard',
-        'lemon cake',
-        'kilauea lemon cake',
-        'mango',
-        'watermelon',
-        'pineapple'
-    ]
+    # Set to None to track ALL products, or provide a list to track specific ones
+    FRESHNESS_TRACKED_PRODUCTS = None  # Track all products
     
     def __init__(
         self,
@@ -214,8 +206,13 @@ class PersistentInventoryTracker(InventoryTracker):
                 product_lower = product_name.lower()
                 
                 # Check if this product should be tracked for freshness
-                is_tracked = any(tracked.lower() in product_lower 
-                               for tracked in self.FRESHNESS_TRACKED_PRODUCTS)
+                if self.FRESHNESS_TRACKED_PRODUCTS is None:
+                    # Track all products
+                    is_tracked = True
+                else:
+                    # Track only specific products
+                    is_tracked = any(tracked.lower() in product_lower 
+                                   for tracked in self.FRESHNESS_TRACKED_PRODUCTS)
                 
                 if is_tracked and count > 0:
                     # Check if we already have freshness data

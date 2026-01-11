@@ -761,7 +761,8 @@
         // Freshness tracking for specific products
         const TRACKED_PRODUCTS = ['passion fruit', 'maui custard', 'lemon cake', 'mango', 'watermelon', 'pineapple'];
         const EXPIRATION_DAYS = 5;
-        const productFirstSeen = {}; // { productName: timestamp }
+        let freshnessState = {}; // Server-provided freshness data
+        let freshnessTimers = {}; // Store interval IDs for live timers
 
         // Note: Sales tracking is now handled server-side on 5-second snapshot intervals
         // Sales data comes via WebSocket 'sales' messages
@@ -822,6 +823,9 @@
                 case 'stats':
                     updateStats(message.data);
                     break;
+                case 'freshness':
+                    updateFreshness(message.data);
+                    break;
                 case 'sales':
                     updateSalesFromServer(message.data);
                     break;
@@ -838,33 +842,113 @@
             noFeed.style.display = 'none';
         }
 
-        // Calculate freshness in days
-        function calculateFreshness(productName) {
-            if (!productFirstSeen[productName]) {
-                productFirstSeen[productName] = Date.now();
+        // Update freshness data from server
+        function updateFreshness(data) {
+            freshnessState = data || {};
+        }
+        
+        // Start live timer that updates every second
+        function startLiveTimer(productName, element, firstSeenUtc) {
+            // Clear existing timer if any
+            if (freshnessTimers[productName]) {
+                clearInterval(freshnessTimers[productName]);
             }
             
-            const ageMs = Date.now() - productFirstSeen[productName];
-            const ageDays = Math.floor(ageMs / (1000 * 60 * 60 * 24));
-            return ageDays;
+            // Update timer every second
+            freshnessTimers[productName] = setInterval(() => {
+                const nowUtc = Date.now() / 1000;
+                const ageSeconds = nowUtc - firstSeenUtc;
+                
+                // Calculate weeks, days, hours, minutes, seconds
+                const weeks = Math.floor(ageSeconds / (7 * 24 * 60 * 60));
+                const days = Math.floor((ageSeconds % (7 * 24 * 60 * 60)) / (24 * 60 * 60));
+                const hours = Math.floor((ageSeconds % (24 * 60 * 60)) / (60 * 60));
+                const minutes = Math.floor((ageSeconds % (60 * 60)) / 60);
+                const seconds = Math.floor(ageSeconds % 60);
+                
+                // Build time string
+                let timeParts = [];
+                if (weeks > 0) timeParts.push(`${weeks}w`);
+                if (days > 0) timeParts.push(`${days}d`);
+                if (hours > 0) timeParts.push(`${hours}h`);
+                if (minutes > 0) timeParts.push(`${minutes}m`);
+                timeParts.push(`${seconds}s`);
+                
+                const timeText = timeParts.join(' ');
+                
+                // Check if expired (more than 5 days)
+                const expired = ageSeconds > (EXPIRATION_DAYS * 24 * 60 * 60);
+                
+                // Update element
+                if (element && document.contains(element)) {
+                    element.textContent = expired ? `${timeText} - EXPIRED` : timeText;
+                    if (expired) {
+                        element.classList.add('expired');
+                    } else {
+                        element.classList.remove('expired');
+                    }
+                } else {
+                    // Element no longer exists, clear timer
+                    clearInterval(freshnessTimers[productName]);
+                    delete freshnessTimers[productName];
+                }
+            }, 1000); // Update every second
         }
 
-        // Format freshness display
+        // Format freshness display with weeks, days, hours, minutes, seconds
         function formatFreshness(productName) {
-            const days = calculateFreshness(productName);
-            const isExpired = days >= EXPIRATION_DAYS;
+            const normalized = productName.toLowerCase();
             
-            if (isExpired) {
-                return {
-                    text: `EXPIRED (${days} days old)`,
-                    expired: true
-                };
-            } else {
-                return {
-                    text: `Fresh - ${days} ${days === 1 ? 'day' : 'days'} old`,
-                    expired: false
-                };
+            // Try exact match first
+            let freshness = freshnessState[normalized];
+            
+            // If no exact match, try partial match
+            if (!freshness) {
+                for (const key in freshnessState) {
+                    if (key.includes(normalized) || normalized.includes(key)) {
+                        freshness = freshnessState[key];
+                        break;
+                    }
+                }
             }
+            
+            // If no freshness data, calculate from now (just detected)
+            let firstSeenUtc;
+            if (!freshness || !freshness.first_seen_utc) {
+                firstSeenUtc = Date.now() / 1000; // Current time in seconds
+            } else {
+                firstSeenUtc = freshness.first_seen_utc;
+            }
+            
+            // Calculate time difference
+            const nowUtc = Date.now() / 1000;
+            const ageSeconds = nowUtc - firstSeenUtc;
+            
+            // Calculate weeks, days, hours, minutes, seconds
+            const weeks = Math.floor(ageSeconds / (7 * 24 * 60 * 60));
+            const days = Math.floor((ageSeconds % (7 * 24 * 60 * 60)) / (24 * 60 * 60));
+            const hours = Math.floor((ageSeconds % (24 * 60 * 60)) / (60 * 60));
+            const minutes = Math.floor((ageSeconds % (60 * 60)) / 60);
+            const seconds = Math.floor(ageSeconds % 60);
+            
+            // Build time string
+            let timeParts = [];
+            if (weeks > 0) timeParts.push(`${weeks}w`);
+            if (days > 0) timeParts.push(`${days}d`);
+            if (hours > 0) timeParts.push(`${hours}h`);
+            if (minutes > 0) timeParts.push(`${minutes}m`);
+            timeParts.push(`${seconds}s`);
+            
+            const timeText = timeParts.join(' ');
+            
+            // Check if expired (more than 5 days = 432000 seconds)
+            const expired = ageSeconds > (EXPIRATION_DAYS * 24 * 60 * 60);
+            
+            return {
+                text: expired ? `${timeText} - EXPIRED` : timeText,
+                expired: expired,
+                firstSeenUtc: firstSeenUtc
+            };
         }
 
         // Update inventory display
@@ -904,15 +988,24 @@
                 
                 // Add freshness timer for tracked products
                 const normalizedName = name.toLowerCase();
-                if (TRACKED_PRODUCTS.includes(normalizedName)) {
-                    const freshness = formatFreshness(normalizedName);
+                // Check if any tracked product is contained in this product name
+                const isTracked = TRACKED_PRODUCTS.some(tracked => 
+                    normalizedName.includes(tracked) || tracked.includes(normalizedName)
+                );
+                
+                if (isTracked) {
+                    const freshness = formatFreshness(name);
                     const freshnessDiv = document.createElement('div');
                     freshnessDiv.className = 'item-freshness';
+                    freshnessDiv.setAttribute('data-product', name);
                     if (freshness.expired) {
                         freshnessDiv.classList.add('expired');
                     }
                     freshnessDiv.textContent = freshness.text;
                     itemInfo.appendChild(freshnessDiv);
+                    
+                    // Start live timer update for this product
+                    startLiveTimer(name, freshnessDiv, freshness.firstSeenUtc);
                 }
                 
                 const itemCount = document.createElement('div');
