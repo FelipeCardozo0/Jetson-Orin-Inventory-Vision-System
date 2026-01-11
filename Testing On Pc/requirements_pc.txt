@@ -14,6 +14,8 @@ aiofiles>=23.0.0                # Async file operations
 
 # Configuration
 PyYAML>=6.0                     # YAML config files
+pytz>=2023.3                    # Timezone support for persistence layer
+bcrypt>=4.0.0                   # Password hashing for authentication
 
 # Optional but recommended
 pillow>=10.0.0                  # Image processing

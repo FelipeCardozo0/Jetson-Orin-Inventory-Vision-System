@@ -33,6 +33,13 @@ ENV/
 logs/
 /tmp/
 
+# Data persistence
+data/
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+
 # IDE
 .vscode/
 .idea/

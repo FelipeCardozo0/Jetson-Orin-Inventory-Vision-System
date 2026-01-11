@@ -38,13 +38,13 @@ python3 run_phone_camera.py
 
 **Troubleshooting:**
 - If phone camera not detected:
-  - Check USB connection
-  - Verify iPhone is unlocked and trusted
-  - Check System Preferences → Camera → iPhone should appear
-  - Try different camera index in `phone_config.yaml`:
-    - Open `phone_config.yaml`
-    - Change `camera.index: 1` to `camera.index: 2` (or 3, etc.)
-  - List available cameras: Run the script and it will show all cameras
+ - Check USB connection
+ - Verify iPhone is unlocked and trusted
+ - Check System Preferences → Camera → iPhone should appear
+ - Try different camera index in `phone_config.yaml`:
+ - Open `phone_config.yaml`
+ - Change `camera.index: 1` to `camera.index: 2` (or 3, etc.)
+ - List available cameras: Run the script and it will show all cameras
 
 ---
 
@@ -54,8 +54,8 @@ Both scripts will automatically list available cameras. Look for output like:
 
 ```
 Scanning for available cameras...
-  ✓ Camera 0: 1280x720 (PC Webcam)
-  ✓ Camera 1: 1920x1080 (iPhone Camera)
+ Camera 0: 1280x720 (PC Webcam)
+ Camera 1: 1920x1080 (iPhone Camera)
 ```
 
 The script will indicate which camera it's using.
@@ -81,31 +81,31 @@ To change camera index, edit the respective config file.
 ### "Cannot open camera at index X"
 
 1. **Check camera permissions** (Mac):
-   - System Preferences → Security & Privacy → Camera
-   - Enable camera access for Terminal/Python
+ - System Preferences → Security & Privacy → Camera
+ - Enable camera access for Terminal/Python
 
 2. **List available cameras**:
-   ```bash
-   python3 -c "import cv2; [print(f'Camera {i}: {cv2.VideoCapture(i).isOpened()}') for i in range(5)]"
-   ```
+ ```bash
+ python3 -c "import cv2; [print(f'Camera {i}: {cv2.VideoCapture(i).isOpened()}') for i in range(5)]"
+ ```
 
 3. **Try different index**:
-   - Edit `pc_config.yaml` or `phone_config.yaml`
-   - Change `camera.index` to the working camera number
+ - Edit `pc_config.yaml` or `phone_config.yaml`
+ - Change `camera.index` to the working camera number
 
 ### Phone Camera Not Appearing
 
 1. **Check iPhone connection**:
-   - USB cable connected
-   - iPhone unlocked
-   - "Trust This Computer" tapped
+ - USB cable connected
+ - iPhone unlocked
+ - "Trust This Computer" tapped
 
 2. **Check System Preferences**:
-   - System Preferences → Camera
-   - iPhone should appear in the list
+ - System Preferences → Camera
+ - iPhone should appear in the list
 
 3. **Try different USB port**:
-   - Some ports may not support camera access
+ - Some ports may not support camera access
 
 ### Port 8080 Already in Use
 

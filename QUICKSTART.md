@@ -96,7 +96,7 @@ If you prefer manual control:
 ```bash
 sudo apt-get update
 sudo apt-get install -y python3-pip python3-dev libopencv-dev \
-    python3-opencv v4l-utils chromium-browser
+ python3-opencv v4l-utils chromium-browser
 ```
 
 ### 2. PyTorch (Jetson)
@@ -137,32 +137,32 @@ Edit `config/config.yaml`:
 **Change camera:**
 ```yaml
 camera:
-  index: 1  # Use /dev/video1 instead of /dev/video0
+ index: 1 # Use /dev/video1 instead of /dev/video0
 ```
 
 **Adjust detection sensitivity:**
 ```yaml
 detector:
-  conf_threshold: 0.3  # Higher = fewer false positives
+ conf_threshold: 0.3 # Higher = fewer false positives
 ```
 
 **Change port:**
 ```yaml
 server:
-  port: 8080  # Change to any available port
+ port: 8080 # Change to any available port
 ```
 
 **Reduce resource usage:**
 ```yaml
 camera:
-  width: 640
-  height: 480
+ width: 640
+ height: 480
 
 detector:
-  imgsz: 416
+ imgsz: 416
 
 stream:
-  target_fps: 15
+ target_fps: 15
 ```
 
 ---
@@ -239,18 +239,18 @@ v4l2-ctl --list-devices
 Edit `config/config.yaml`:
 ```yaml
 detector:
-  half: true      # Enable FP16
-  imgsz: 416      # Reduce input size
+ half: true # Enable FP16
+ imgsz: 416 # Reduce input size
 ```
 
 ### Problem: Low FPS
 ```yaml
 camera:
-  width: 640      # Lower resolution
-  height: 480
+ width: 640 # Lower resolution
+ height: 480
 
 stream:
-  target_fps: 15  # Reduce target FPS
+ target_fps: 15 # Reduce target FPS
 ```
 
 ### Problem: Web interface not loading
@@ -302,23 +302,23 @@ htop
 ```yaml
 # Best performance (higher resource usage)
 camera:
-  width: 1280
-  height: 720
+ width: 1280
+ height: 720
 detector:
-  imgsz: 640
-  half: true
+ imgsz: 640
+ half: true
 stream:
-  target_fps: 30
+ target_fps: 30
 
 # Best efficiency (lower resource usage)
 camera:
-  width: 640
-  height: 480
+ width: 640
+ height: 480
 detector:
-  imgsz: 416
-  half: true
+ imgsz: 416
+ half: true
 stream:
-  target_fps: 15
+ target_fps: 15
 ```
 
 ---

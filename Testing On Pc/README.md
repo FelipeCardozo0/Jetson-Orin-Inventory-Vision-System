@@ -61,15 +61,15 @@ Edit `pc_config.yaml` to customize:
 
 ```yaml
 camera:
-  index: 0              # 0 = built-in webcam, 1 = external USB camera
-  width: 1280
-  height: 720
-  fps: 30
+ index: 0 # 0 = built-in webcam, 1 = external USB camera
+ width: 1280
+ height: 720
+ fps: 30
 
 detector:
-  device: 'cpu'         # Use 'cpu' or '0' for GPU if available
-  half: false           # FP16 not needed on PC
-  conf_threshold: 0.25
+ device: 'cpu' # Use 'cpu' or '0' for GPU if available
+ half: false # FP16 not needed on PC
+ conf_threshold: 0.25
 ```
 
 ## Troubleshooting

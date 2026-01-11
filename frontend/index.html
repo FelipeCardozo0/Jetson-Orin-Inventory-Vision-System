@@ -56,10 +56,10 @@
 
         /* Diagnostics Panel - Hidden by default */
         .diagnostics-panel {
-            position: absolute;
+            position: fixed;
             right: 140px;
-            top: 50%;
-            transform: translateY(-50%);
+            top: auto;
+            transform: none;
             background: rgba(30, 41, 54, 0.98);
             border: 1px solid rgba(76, 175, 80, 0.3);
             border-radius: 8px;
@@ -70,6 +70,8 @@
             min-width: 280px;
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
             z-index: 1000;
+            max-height: calc(100vh - 20px);
+            overflow-y: auto;
         }
 
         .diagnostics-trigger {
@@ -122,6 +124,23 @@
             border-radius: 8px;
             font-size: 13px;
             font-weight: 600;
+        }
+
+        .logout-button {
+            padding: 8px 16px;
+            background: rgba(244, 67, 54, 0.1);
+            border: 1px solid rgba(244, 67, 54, 0.3);
+            border-radius: 8px;
+            color: #f44336;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .logout-button:hover {
+            background: rgba(244, 67, 54, 0.2);
+            border-color: rgba(244, 67, 54, 0.5);
         }
 
         .status-indicator {
@@ -409,6 +428,124 @@
             opacity: 0.8;
         }
 
+        /* Alerts Section */
+        .alerts-section {
+            background: linear-gradient(135deg, #1e2936 0%, #252f3d 100%);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            margin-top: 16px;
+            min-height: 180px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .alerts-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .alerts-count-badge {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255, 152, 0, 0.1);
+            padding: 6px 12px;
+            border-radius: 6px;
+            border: 1px solid rgba(255, 152, 0, 0.3);
+            font-size: 12px;
+            color: #FF9800;
+            font-weight: 600;
+        }
+
+        .alerts-list {
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+
+        .alert-item {
+            background: rgba(255, 255, 255, 0.03);
+            border-left: 3px solid #FF9800;
+            padding: 12px 16px;
+            margin-bottom: 8px;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .alert-item:hover {
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        .alert-item.low-stock {
+            border-left-color: #FF9800;
+        }
+
+        .alert-item.expiration {
+            border-left-color: #f44336;
+        }
+
+        .alert-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+
+        .alert-type {
+            font-size: 13px;
+            font-weight: 600;
+            color: #FF9800;
+        }
+
+        .alert-item.expiration .alert-type {
+            color: #f44336;
+        }
+
+        .alert-time {
+            font-size: 11px;
+            color: #9ca3af;
+        }
+
+        .alert-message {
+            font-size: 13px;
+            color: #e8eaed;
+            line-height: 1.4;
+        }
+
+        .alert-product {
+            font-weight: 600;
+            color: #4CAF50;
+        }
+
+        .empty-alerts {
+            text-align: center;
+            color: #6b7280;
+            font-size: 14px;
+            padding: 40px 20px;
+        }
+
+        .alerts-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .alerts-list::-webkit-scrollbar-track {
+            background: rgba(15, 20, 25, 0.4);
+            border-radius: 3px;
+        }
+
+        .alerts-list::-webkit-scrollbar-thumb {
+            background: #FF9800;
+            border-radius: 3px;
+        }
+
+        .alerts-list::-webkit-scrollbar-thumb:hover {
+            opacity: 0.8;
+        }
+
         /* Responsive adjustments */
         @media (max-width: 1200px) {
             .main-content {
@@ -421,8 +558,8 @@
             }
 
             .diagnostics-panel {
-                right: 0;
-                top: 60px;
+                right: 10px;
+                top: auto;
                 transform: none;
             }
         }
@@ -471,6 +608,10 @@
                     <span id="connectionStatus">Connecting...</span>
                     <div class="status-indicator" id="statusIndicator"></div>
                 </div>
+                
+                <button class="logout-button" id="logoutButton">
+                    Logout
+                </button>
             </div>
         </header>
 
@@ -511,6 +652,19 @@
                 <div class="empty-sales">No sales recorded yet</div>
             </div>
         </div>
+
+        <div class="alerts-section">
+            <div class="alerts-header">
+                <span class="section-title">System Alerts</span>
+                <div class="alerts-count-badge">
+                    <span id="alertsCount">0</span>
+                    <span>active alerts</span>
+                </div>
+            </div>
+            <div class="alerts-list" id="alertsList">
+                <div class="empty-alerts">No alerts at this time</div>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -534,16 +688,65 @@
         const diagConnections = document.getElementById('diagConnections');
         const salesLogList = document.getElementById('salesLogList');
         const salesCount = document.getElementById('salesCount');
+        const alertsList = document.getElementById('alertsList');
+        const alertsCount = document.getElementById('alertsCount');
 
         // Diagnostics panel toggle
         let diagPanelVisible = false;
+        
+        function positionDiagnosticsPanel() {
+            if (!diagPanelVisible) return;
+            
+            const triggerRect = diagTrigger.getBoundingClientRect();
+            // Force a reflow to get accurate height
+            diagPanel.style.visibility = 'hidden';
+            diagPanel.style.display = 'flex';
+            const panelHeight = diagPanel.offsetHeight || 200;
+            diagPanel.style.visibility = '';
+            
+            const viewportHeight = window.innerHeight;
+            const padding = 10; // Minimum distance from viewport edges
+            
+            // Try positioning below trigger first (default preference)
+            let topPosition = triggerRect.bottom + 8; // 8px gap below trigger
+            
+            // Check if panel fits below trigger
+            if (topPosition + panelHeight > viewportHeight - padding) {
+                // Panel doesn't fit below, try above trigger
+                topPosition = triggerRect.top - panelHeight - 8; // 8px gap above trigger
+                
+                // If still doesn't fit above (shouldn't happen but handle edge case)
+                if (topPosition < padding) {
+                    // Center vertically if panel is larger than viewport
+                    topPosition = Math.max(padding, (viewportHeight - panelHeight) / 2);
+                }
+            }
+            
+            // Final boundary checks to ensure panel stays within viewport
+            topPosition = Math.max(padding, Math.min(topPosition, viewportHeight - panelHeight - padding));
+            
+            // Set position
+            diagPanel.style.top = `${topPosition}px`;
+        }
+        
         diagTrigger.addEventListener('click', (e) => {
             e.stopPropagation();
             diagPanelVisible = !diagPanelVisible;
             if (diagPanelVisible) {
                 diagPanel.classList.add('visible');
+                // Wait for panel to render, then position it
+                setTimeout(() => {
+                    positionDiagnosticsPanel();
+                }, 0);
             } else {
                 diagPanel.classList.remove('visible');
+            }
+        });
+        
+        // Reposition panel on window resize
+        window.addEventListener('resize', () => {
+            if (diagPanelVisible) {
+                positionDiagnosticsPanel();
             }
         });
 
@@ -560,11 +763,8 @@
         const EXPIRATION_DAYS = 5;
         const productFirstSeen = {}; // { productName: timestamp }
 
-        // Sales tracking
-        let previousInventoryTotal = 0;
-        let salesLog = [];
-        let lastInventoryCheck = Date.now();
-        const SALES_CHECK_INTERVAL = 5000; // 5 seconds
+        // Note: Sales tracking is now handled server-side on 5-second snapshot intervals
+        // Sales data comes via WebSocket 'sales' messages
 
         // Connect to WebSocket
         function connect() {
@@ -622,6 +822,12 @@
                 case 'stats':
                     updateStats(message.data);
                     break;
+                case 'sales':
+                    updateSalesFromServer(message.data);
+                    break;
+                case 'alerts':
+                    updateAlerts(message.data);
+                    break;
             }
         }
 
@@ -667,8 +873,8 @@
             const total = Object.values(inventory).reduce((sum, count) => sum + count, 0);
             totalItems.textContent = total;
 
-            // Check for sales (inventory decrease)
-            checkForSales(inventory, total);
+            // Note: Sales detection is now handled server-side on 5-second snapshot intervals
+            // No client-side sales detection to avoid false positives from frame-by-frame fluctuations
 
             // Clear current list
             inventoryList.innerHTML = '';
@@ -722,86 +928,84 @@
             previousInventoryTotal = total;
         }
 
-        // Check for sales by comparing inventory totals
-        function checkForSales(currentInventory, currentTotal) {
-            const now = Date.now();
-            
-            // Only check every 5 seconds
-            if (now - lastInventoryCheck < SALES_CHECK_INTERVAL) {
-                return;
-            }
-            
-            lastInventoryCheck = now;
-            
-            // If total decreased, items were sold
-            if (previousInventoryTotal > 0 && currentTotal < previousInventoryTotal) {
-                const itemsSold = previousInventoryTotal - currentTotal;
-                
-                // Try to determine which product(s) were sold
-                // For simplicity, we'll record as "Product Removed" if we can't determine exact product
-                // In a production system, you'd track per-product changes
-                
-                for (let i = 0; i < itemsSold; i++) {
-                    recordSale('Product Removed');
-                }
-            }
-        }
-
-        // Record a sale
-        function recordSale(productName) {
-            const saleTime = new Date();
-            
-            // Format time in US Eastern Time
-            const options = {
-                timeZone: 'America/New_York',
-                year: 'numeric',
-                month: '2-digit',
-                day: '2-digit',
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit',
-                hour12: true
-            };
-            
-            const formatter = new Intl.DateTimeFormat('en-US', options);
-            const formattedTime = formatter.format(saleTime);
-            
-            const sale = {
-                product: productName,
-                time: formattedTime,
-                timestamp: saleTime.getTime()
-            };
-            
-            salesLog.unshift(sale); // Add to beginning for chronological order (newest first)
-            updateSalesLog();
-        }
-
-        // Update sales log display
-        function updateSalesLog() {
-            salesCount.textContent = salesLog.length;
-            
-            if (salesLog.length === 0) {
+        // Update sales log from server data (5-second snapshot interval)
+        function updateSalesFromServer(salesData) {
+            if (!salesData || salesData.length === 0) {
+                salesCount.textContent = '0';
                 salesLogList.innerHTML = '<div class="empty-sales">No sales recorded yet</div>';
                 return;
             }
             
+            salesCount.textContent = salesData.length;
             salesLogList.innerHTML = '';
             
-            salesLog.forEach(sale => {
+            // Display sales in order (newest first)
+            salesData.forEach(sale => {
                 const entry = document.createElement('div');
                 entry.className = 'sales-entry';
                 
                 const productDiv = document.createElement('div');
                 productDiv.className = 'sales-product';
-                productDiv.textContent = sale.product;
+                
+                // Display product name and quantity
+                const productName = sale.product_name || 'Unknown';
+                const quantity = sale.quantity_delta || 1;
+                if (quantity > 1) {
+                    productDiv.textContent = `${productName} (x${quantity})`;
+                } else {
+                    productDiv.textContent = productName;
+                }
                 
                 const timeDiv = document.createElement('div');
                 timeDiv.className = 'sales-time';
-                timeDiv.textContent = sale.time;
+                // Use EST timestamp from server
+                timeDiv.textContent = sale.timestamp_est || new Date(sale.timestamp_utc * 1000).toLocaleString();
                 
                 entry.appendChild(productDiv);
                 entry.appendChild(timeDiv);
                 salesLogList.appendChild(entry);
+            });
+        }
+
+        // Update alerts display
+        function updateAlerts(alerts) {
+            alertsCount.textContent = alerts.length;
+            
+            if (alerts.length === 0) {
+                alertsList.innerHTML = '<div class="empty-alerts">No alerts at this time</div>';
+                return;
+            }
+            
+            alertsList.innerHTML = '';
+            
+            alerts.forEach(alert => {
+                const alertDiv = document.createElement('div');
+                alertDiv.className = `alert-item ${alert.alert_type}`;
+                
+                const headerDiv = document.createElement('div');
+                headerDiv.className = 'alert-header';
+                
+                const typeDiv = document.createElement('div');
+                typeDiv.className = 'alert-type';
+                typeDiv.textContent = alert.alert_type === 'low_stock' ? 'Low Stock' : 'Expiration Warning';
+                
+                const timeDiv = document.createElement('div');
+                timeDiv.className = 'alert-time';
+                timeDiv.textContent = alert.timestamp_est || new Date(alert.timestamp_utc * 1000).toLocaleString();
+                
+                headerDiv.appendChild(typeDiv);
+                headerDiv.appendChild(timeDiv);
+                
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'alert-message';
+                messageDiv.innerHTML = alert.message.replace(
+                    alert.product_name,
+                    `<span class="alert-product">${alert.product_name}</span>`
+                );
+                
+                alertDiv.appendChild(headerDiv);
+                alertDiv.appendChild(messageDiv);
+                alertsList.appendChild(alertDiv);
             });
         }
 
@@ -842,6 +1046,28 @@
                 // The freshness will be recalculated on next inventory update
             }
         }, 60000); // Update every minute
+
+        // Logout handler
+        function handleLogout() {
+            fetch('/api/logout', {
+                method: 'POST',
+                credentials: 'same-origin'
+            })
+            .then(() => {
+                window.location.href = '/login';
+            })
+            .catch(error => {
+                console.error('Logout error:', error);
+                // Redirect anyway
+                window.location.href = '/login';
+            });
+        }
+
+        // Setup logout button
+        const logoutButton = document.getElementById('logoutButton');
+        if (logoutButton) {
+            logoutButton.addEventListener('click', handleLogout);
+        }
 
         // Initialize connection
         connect();

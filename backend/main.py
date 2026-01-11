@@ -8,6 +8,7 @@ import asyncio
 import logging
 import signal
 import sys
+import os
 from pathlib import Path
 from typing import Optional
 
@@ -17,6 +18,7 @@ import yaml
 from camera import USBCamera
 from detector import YOLODetector
 from inventory import InventoryTracker
+from inventory_persistent import PersistentInventoryTracker
 from server import VideoStreamServer, StreamManager
 
 # Configure logging
@@ -99,7 +101,26 @@ class InventorySystem:
             },
             'inventory': {
                 'smoothing_window': 10,
-                'smoothing_method': 'median'
+                'smoothing_method': 'median',
+                'enable_persistence': True,
+                'snapshot_interval': 5.0,
+                'expiration_days': 5,
+                'sales_confirm_intervals': 2,
+                'sales_min_delta': 1,
+                'sales_cooldown_seconds': 10.0
+            },
+            'alerts': {
+                'enable_alerts': True,
+                'alert_confirm_intervals': 2,
+                'alert_cooldown_seconds': 3600.0,
+                'low_stock_thresholds': {
+                    'mango': 3,
+                    'watermelon': 2,
+                    'pineapple': 2,
+                    'passion fruit': 2,
+                    'maui custard': 2,
+                    'lemon cake': 2
+                }
             },
             'server': {
                 'host': '0.0.0.0',
@@ -120,12 +141,12 @@ class InventorySystem:
         try:
             # Initialize camera
             logger.info("Initializing camera...")
-            camera_config = self.config['camera']
+            camera_config = self.config.get('camera', {})
             self.camera = USBCamera(
-                camera_index=camera_config['index'],
-                width=camera_config['width'],
-                height=camera_config['height'],
-                fps=camera_config['fps']
+                camera_index=camera_config.get('index', 0),
+                width=camera_config.get('width', 1280),
+                height=camera_config.get('height', 720),
+                fps=camera_config.get('fps', 30)
             )
             
             if not self.camera.open():
@@ -136,21 +157,21 @@ class InventorySystem:
             
             # Initialize detector
             logger.info("Initializing YOLO detector...")
-            detector_config = self.config['detector']
+            detector_config = self.config.get('detector', {})
             
             # Resolve model path relative to project root
-            model_path = Path(detector_config['model_path'])
+            model_path = Path(detector_config.get('model_path', 'best.pt'))
             if not model_path.is_absolute():
                 project_root = Path(__file__).parent.parent
                 model_path = project_root / model_path
             
             self.detector = YOLODetector(
                 model_path=str(model_path),
-                conf_threshold=detector_config['conf_threshold'],
-                iou_threshold=detector_config['iou_threshold'],
-                imgsz=detector_config['imgsz'],
-                device=detector_config['device'],
-                half=detector_config['half']
+                conf_threshold=detector_config.get('conf_threshold', 0.25),
+                iou_threshold=detector_config.get('iou_threshold', 0.45),
+                imgsz=detector_config.get('imgsz', 640),
+                device=detector_config.get('device', '0'),
+                half=detector_config.get('half', True)
             )
             
             if not self.detector.load():
@@ -162,38 +183,62 @@ class InventorySystem:
             
             logger.info(f"Detector initialized: {self.detector.get_info()}")
             
-            # Initialize inventory tracker
+            # Initialize inventory tracker with persistence
             logger.info("Initializing inventory tracker...")
-            inventory_config = self.config['inventory']
-            self.inventory_tracker = InventoryTracker(
-                smoothing_window=inventory_config['smoothing_window'],
-                smoothing_method=inventory_config['smoothing_method'],
-                class_names=self.detector.class_names
-            )
+            inventory_config = self.config.get('inventory', {})
             
-            logger.info("Inventory tracker initialized")
+            # Use persistent tracker if enabled, otherwise use base tracker
+            enable_persistence = inventory_config.get('enable_persistence', True)
+            
+            if enable_persistence:
+                # Get alert configuration
+                alerts_config = self.config.get('alerts', {})
+                
+                self.inventory_tracker = PersistentInventoryTracker(
+                    smoothing_window=inventory_config.get('smoothing_window', 10),
+                    smoothing_method=inventory_config.get('smoothing_method', 'median'),
+                    class_names=self.detector.class_names,
+                    snapshot_interval=inventory_config.get('snapshot_interval', 5.0),
+                    expiration_days=inventory_config.get('expiration_days', 5),
+                    enable_persistence=True,
+                    sales_confirm_intervals=inventory_config.get('sales_confirm_intervals', 2),
+                    sales_min_delta=inventory_config.get('sales_min_delta', 1),
+                    sales_cooldown_seconds=inventory_config.get('sales_cooldown_seconds', 10.0),
+                    enable_alerts=alerts_config.get('enable_alerts', True),
+                    low_stock_thresholds=alerts_config.get('low_stock_thresholds'),
+                    alert_confirm_intervals=alerts_config.get('alert_confirm_intervals', 2),
+                    alert_cooldown_seconds=alerts_config.get('alert_cooldown_seconds', 3600.0)
+                )
+                logger.info("Inventory tracker initialized with persistence, sales attribution, and alerts")
+            else:
+                self.inventory_tracker = InventoryTracker(
+                    smoothing_window=inventory_config.get('smoothing_window', 10),
+                    smoothing_method=inventory_config.get('smoothing_method', 'median'),
+                    class_names=self.detector.class_names
+                )
+                logger.info("Inventory tracker initialized (persistence disabled)")
             
             # Initialize web server
             logger.info("Initializing web server...")
-            server_config = self.config['server']
+            server_config = self.config.get('server', {})
             frontend_dir = Path(__file__).parent.parent / 'frontend'
             
             self.server = VideoStreamServer(
-                host=server_config['host'],
-                port=server_config['port'],
+                host=server_config.get('host', '0.0.0.0'),
+                port=server_config.get('port', 8080),
                 frontend_dir=frontend_dir
             )
             
-            logger.info(f"Web server initialized at http://{server_config['host']}:{server_config['port']}")
+            logger.info(f"Web server initialized at http://{server_config.get('host', '0.0.0.0')}:{server_config.get('port', 8080)}")
             
             # Initialize stream manager
-            stream_config = self.config['stream']
+            stream_config = self.config.get('stream', {})
             self.stream_manager = StreamManager(
                 camera=self.camera,
                 detector=self.detector,
                 inventory_tracker=self.inventory_tracker,
                 server=self.server,
-                target_fps=stream_config['target_fps']
+                target_fps=stream_config.get('target_fps', 30)
             )
             
             logger.info("Stream manager initialized")
@@ -225,10 +270,14 @@ class InventorySystem:
         if self.camera:
             self.camera.release()
         
-        # Log final statistics
+        # Close persistence layer and log final statistics
         if self.inventory_tracker:
             stats = self.inventory_tracker.get_statistics()
             logger.info(f"Final statistics: {stats}")
+            
+            # Close persistence if available
+            if hasattr(self.inventory_tracker, 'close'):
+                self.inventory_tracker.close()
         
         self.shutdown_event.set()
         logger.info("Shutdown complete")
@@ -271,23 +320,77 @@ class InventorySystem:
             await self.shutdown()
 
 
+def create_pid_file():
+    """
+    Create PID file for single-instance protection
+    """
+    pid_file = '/tmp/pokebowl.pid'
+    
+    # Check if already running
+    if os.path.exists(pid_file):
+        try:
+            with open(pid_file, 'r') as f:
+                old_pid = int(f.read().strip())
+            
+            # Check if process is still running
+            try:
+                os.kill(old_pid, 0)
+                logger.error(f"Another instance is already running (PID: {old_pid})")
+                sys.exit(1)
+            except OSError:
+                # Process not running, remove stale PID file
+                logger.warning(f"Removing stale PID file (PID: {old_pid})")
+                os.remove(pid_file)
+        except Exception as e:
+            logger.warning(f"Error checking PID file: {e}")
+    
+    # Write current PID
+    try:
+        with open(pid_file, 'w') as f:
+            f.write(str(os.getpid()))
+        logger.info(f"PID file created: {pid_file}")
+    except Exception as e:
+        logger.warning(f"Failed to create PID file: {e}")
+
+
+def remove_pid_file():
+    """
+    Remove PID file on shutdown
+    """
+    pid_file = '/tmp/pokebowl.pid'
+    try:
+        if os.path.exists(pid_file):
+            os.remove(pid_file)
+            logger.info("PID file removed")
+    except Exception as e:
+        logger.warning(f"Failed to remove PID file: {e}")
+
+
 async def main():
     """
     Application entry point
     """
-    # Determine config path
-    config_path = Path(__file__).parent.parent / 'config' / 'config.yaml'
+    # Create PID file for single-instance protection
+    create_pid_file()
     
-    # Create and run system
-    system = InventorySystem(config_path)
+    try:
+        # Determine config path
+        config_path = Path(__file__).parent.parent / 'config' / 'config.yaml'
+        
+        # Create and run system
+        system = InventorySystem(config_path)
+        
+        # Setup signal handlers
+        loop = asyncio.get_event_loop()
+        for sig in (signal.SIGINT, signal.SIGTERM):
+            loop.add_signal_handler(sig, lambda: asyncio.create_task(system.shutdown()))
+        
+        # Run system
+        await system.run()
     
-    # Setup signal handlers
-    loop = asyncio.get_event_loop()
-    for sig in (signal.SIGINT, signal.SIGTERM):
-        loop.add_signal_handler(sig, lambda: asyncio.create_task(system.shutdown()))
-    
-    # Run system
-    await system.run()
+    finally:
+        # Always remove PID file
+        remove_pid_file()
 
 
 if __name__ == '__main__':
@@ -298,4 +401,6 @@ if __name__ == '__main__':
     except Exception as e:
         logger.error(f"Fatal error: {e}", exc_info=True)
         sys.exit(1)
+    finally:
+        remove_pid_file()
 

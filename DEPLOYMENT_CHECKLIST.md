@@ -140,7 +140,7 @@ sudo systemctl status pokebowl-inventory
 ### 9. Verify Auto-Start
 ```bash
 sudo systemctl status pokebowl-inventory
-sudo systemctl status chromium-kiosk  # If using kiosk mode
+sudo systemctl status chromium-kiosk # If using kiosk mode
 ```
 
 - [ ] Both services show "enabled"
@@ -229,10 +229,10 @@ sudo journalctl -u pokebowl-inventory -n 50
 
 If experiencing low FPS:
 - [ ] Enable max performance mode:
-  ```bash
-  sudo nvpmodel -m 0
-  sudo jetson_clocks
-  ```
+ ```bash
+ sudo nvpmodel -m 0
+ sudo jetson_clocks
+ ```
 - [ ] Reduce camera resolution in `config.yaml`
 - [ ] Lower YOLO input size to 416
 - [ ] Reduce target FPS to 15
@@ -261,12 +261,12 @@ Create monitoring script:
 cat > ~/monitor_inventory.sh << 'EOF'
 #!/bin/bash
 while true; do
-    echo "=== $(date) ==="
-    systemctl status pokebowl-inventory --no-pager | head -5
-    echo ""
-    curl -s http://localhost:8080/health | jq
-    echo ""
-    sleep 60
+ echo "=== $(date) ==="
+ systemctl status pokebowl-inventory --no-pager | head -5
+ echo ""
+ curl -s http://localhost:8080/health | jq
+ echo ""
+ sleep 60
 done
 EOF
 
@@ -293,17 +293,17 @@ sudo journalctl --vacuum-time=7d
 ### Basic Security
 - [ ] Change default SSH password
 - [ ] Enable firewall:
-  ```bash
-  sudo ufw enable
-  sudo ufw allow 22    # SSH
-  sudo ufw allow 8080  # Web interface
-  ```
+ ```bash
+ sudo ufw enable
+ sudo ufw allow 22 # SSH
+ sudo ufw allow 8080 # Web interface
+ ```
 - [ ] Disable unused services
 - [ ] Keep system updated
 
 ### Network Security
 - [ ] Restrict web interface to localhost if not needed externally:
-  Edit `config.yaml`: `host: '127.0.0.1'`
+ Edit `config.yaml`: `host: '127.0.0.1'`
 - [ ] Consider VPN access instead of direct exposure
 - [ ] Use strong WiFi password if using wireless
 
@@ -321,7 +321,7 @@ sudo journalctl --vacuum-time=7d
 ```bash
 cd ~/Poke-Bowl---updated-January
 tar -czf ~/pokebowl_backup_$(date +%Y%m%d).tar.gz \
-    config/ best.pt deployment/ backend/ frontend/
+ config/ best.pt deployment/ backend/ frontend/
 ```
 
 - [ ] Configuration backed up
@@ -444,10 +444,10 @@ For detailed troubleshooting, see **README.md** section.
 
 ## Sign-Off
 
-**Deployed By**: _______________________  
-**Date**: _______________________  
-**Deployment Location**: _______________________  
-**Status**: ⬜ Development  ⬜ Staging  ⬜ Production
+**Deployed By**: _______________________
+**Date**: _______________________
+**Deployment Location**: _______________________
+**Status**: ⬜ Development ⬜ Staging ⬜ Production
 
 **Notes**:
 _____________________________________________________________
@@ -458,5 +458,5 @@ _____________________________________________________________
 
 **Deployment Status**: ⬜ Complete ⬜ In Progress ⬜ Issues Found
 
-If all checkboxes are marked, the system is ready for production use! 🚀
+If all checkboxes are marked, the system is ready for production use!
 

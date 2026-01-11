@@ -52,6 +52,47 @@ inventory:
   # - mean: Smooth averaging
   # - mode: Most common value
   smoothing_method: median
+  
+  # Persistence settings (SQLite database)
+  enable_persistence: true      # Enable data persistence
+  snapshot_interval: 5.0        # Seconds between inventory snapshots
+  expiration_days: 5            # Days until products expire
+  
+  # Sales attribution settings
+  sales_confirm_intervals: 2    # Number of consecutive intervals to confirm sale
+  sales_min_delta: 1            # Minimum quantity change to consider
+  sales_cooldown_seconds: 10.0  # Cooldown between sales for same product
+
+# Alert System Settings
+alerts:
+  # Enable/disable alert system
+  enable_alerts: true
+  
+  # Number of consecutive intervals to confirm alert condition
+  alert_confirm_intervals: 2
+  
+  # Cooldown between alerts for same product+type (seconds)
+  # Default: 3600 (1 hour)
+  alert_cooldown_seconds: 3600.0
+  
+  # Low stock thresholds per product
+  # Alerts trigger when count falls below threshold for confirm_intervals
+  low_stock_thresholds:
+    mango: 3
+    watermelon: 2
+    pineapple: 2
+    passion fruit: 2
+    maui custard: 2
+    lemon cake: 2
+  
+  # Email notification settings (via environment variables)
+  # Set these in your environment:
+  #   SMTP_HOST - SMTP server hostname (e.g., smtp.gmail.com)
+  #   SMTP_PORT - SMTP server port (e.g., 587 for TLS)
+  #   SMTP_USER - SMTP username/email
+  #   SMTP_PASS - SMTP password or app-specific password
+  #   NOTIFY_TO - Recipient email address
+  #   NOTIFY_FROM - Sender email (optional, defaults to SMTP_USER)
 
 # Web Server Settings
 server:

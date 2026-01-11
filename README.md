@@ -39,6 +39,14 @@ A real-time object detection and inventory tracking system designed for restaura
 - Real-time YOLO-based object detection with GPU acceleration
 - Temporal smoothing for stable inventory counts
 - WebSocket-based live video streaming
+- **Secure session-based authentication** with bcrypt password hashing and HttpOnly cookies
+- **SQLite-based data persistence** (inventory snapshots, freshness tracking, sales logs, alerts)
+- **State restoration** across restarts and reboots
+- **Product freshness tracking** with 5-day expiration monitoring
+- **Per-product sales attribution** with temporal validation and noise resistance
+- **Automatic sales detection** with SKU-level accuracy and EST timestamps
+- **Automated alerting system** with low-stock and expiration alerts
+- **Email notifications** via SMTP with graceful degradation
 - Automatic startup on boot via systemd
 - Graceful camera disconnect and reconnect handling
 - Low-latency, production-ready architecture
@@ -62,31 +70,101 @@ A real-time object detection and inventory tracking system designed for restaura
 Jetson-Orin-Inventory-Vision-System/
 │
 ├── backend/
-│   ├── main.py              # Application entry point
-│   ├── camera.py            # USB camera handler with reconnection
-│   ├── detector.py          # YOLO inference wrapper
-│   ├── inventory.py         # Inventory tracking with smoothing
-│   └── server.py            # Web server and streaming
+│ ├── main.py # Application entry point
+│ ├── camera.py # USB camera handler with reconnection
+│ ├── detector.py # YOLO inference wrapper
+│ ├── inventory.py # Inventory tracking with smoothing
+│ ├── inventory_persistent.py # Persistent inventory tracker
+│ ├── persistence.py # SQLite database layer
+│ ├── sales_attribution.py # Per-product sales attribution engine
+│ ├── alerts.py # Alert engine and email notifications
+│ ├── auth.py # Authentication and session management
+│ └── server.py # Web server and streaming
+│
+├── data/
+│ └── inventory.db # SQLite database (auto-created)
 │
 ├── frontend/
-│   └── index.html           # Web UI (video feed and counts)
+│ ├── index.html # Web UI (video feed and counts)
+│ └── login.html # Login page
 │
 ├── config/
-│   └── config.yaml          # System configuration
+│ └── config.yaml # System configuration
 │
 ├── deployment/
-│   ├── pokebowl-inventory.service    # Systemd service file
-│   ├── chromium-kiosk.service        # Browser kiosk mode service
-│   ├── install_service.sh            # Service installation script
-│   ├── setup_autostart.sh            # Full auto-start setup
-│   ├── setup_jetson.sh               # Complete system setup
-│   └── quick_test.sh                 # System verification
+│ ├── pokebowl-inventory.service # Systemd service file
+│ ├── chromium-kiosk.service # Browser kiosk mode service
+│ ├── install_service.sh # Service installation script
+│ ├── setup_autostart.sh # Full auto-start setup
+│ ├── setup_jetson.sh # Complete system setup
+│ └── quick_test.sh # System verification
 │
-├── best.pt                  # Trained YOLO model (40 classes)
-├── requirements.txt         # Python dependencies
-├── dataset/                 # Training data
-└── Images/                  # Raw training images
+├── best.pt # Trained YOLO model (40 classes)
+├── requirements.txt # Python dependencies
+├── setup_auth.sh # Authentication setup script
+├── generate_password_hash.py # Password hash utility
+├── dataset/ # Training data
+└── Images/ # Raw training images
 ```
+
+---
+
+## Production Deployment Checklist
+
+Before deploying to production, verify the following:
+
+### System Validation
+
+```bash
+# Run validation script
+python3 validate_system.py
+```
+
+All checks must pass:
+- Critical files present (model, backend modules, frontend, configs)
+- Python dependencies installed
+- Configuration files valid
+- Database schema correct (if exists)
+- File permissions appropriate
+
+### Configuration Review
+
+- Review `config/config.yaml` for production settings
+- Verify camera index matches your hardware
+- Confirm YOLO model path is correct
+- Set appropriate confidence and IoU thresholds
+- Configure alert thresholds for your inventory levels
+
+### Optional: Email Alerts
+
+If using email notifications, set environment variables:
+
+```bash
+export SMTP_HOST="smtp.gmail.com"
+export SMTP_PORT="587"
+export SMTP_USER="your-email@gmail.com"
+export SMTP_PASS="your-app-password"
+export NOTIFY_TO="recipient@example.com"
+```
+
+For Gmail, use an [App Password](https://support.google.com/accounts/answer/185833).
+
+### Deployment Steps
+
+1. Run validation: `python3 validate_system.py`
+2. Test manually: `cd backend && python3 main.py`
+3. Verify web interface: Open `http://localhost:8080`
+4. Check logs: `tail -f /tmp/pokebowl_inventory.log`
+5. Install systemd service: `bash deployment/install_service.sh`
+6. Enable auto-start: `sudo systemctl enable pokebowl-inventory`
+
+### Post-Deployment Verification
+
+- Confirm system starts automatically after reboot
+- Verify camera reconnection after disconnect
+- Check database growth (should be ~2.5-5 MB/day with 30-day retention)
+- Test alert triggers (low stock, expiration)
+- Verify sales attribution accuracy
 
 ---
 
@@ -132,15 +210,15 @@ cd Jetson-Orin-Inventory-Vision-System
 ```bash
 sudo apt-get update
 sudo apt-get install -y \
-    python3-pip \
-    python3-dev \
-    libopencv-dev \
-    python3-opencv \
-    v4l-utils \
-    chromium-browser \
-    gstreamer1.0-tools \
-    gstreamer1.0-plugins-good \
-    gstreamer1.0-plugins-bad
+ python3-pip \
+ python3-dev \
+ libopencv-dev \
+ python3-opencv \
+ v4l-utils \
+ chromium-browser \
+ gstreamer1.0-tools \
+ gstreamer1.0-plugins-good \
+ gstreamer1.0-plugins-bad
 ```
 
 #### Step 3: Install PyTorch (Jetson-Optimized)
@@ -186,7 +264,7 @@ Update `config/config.yaml` if your camera is not at `/dev/video0`:
 
 ```yaml
 camera:
-  index: 0  # Change to 1 for /dev/video1, etc.
+ index: 0 # Change to 1 for /dev/video1, etc.
 ```
 
 #### Step 7: Test System Manually
@@ -234,6 +312,55 @@ After reboot, the system should automatically:
 
 ---
 
+## Authentication
+
+The system includes secure session-based authentication to protect access to the dashboard and API endpoints.
+
+### Setup Authentication
+
+1. **Generate environment variables**:
+   ```bash
+   source setup_auth.sh
+   ```
+
+2. **Or configure manually**:
+   ```bash
+   # Enable authentication
+   export AUTH_ENABLED="true"
+   
+   # Generate session secret
+   export AUTH_SESSION_SECRET=$(python3 -c 'import secrets; print(secrets.token_urlsafe(32))')
+   
+   # Session TTL (24 hours)
+   export AUTH_SESSION_TTL="86400"
+   
+   # User credentials (bcrypt hashes)
+   export AUTH_USERS_JSON='{"JustinMenezes":"$2b$12$...","FelipeCardozo":"$2b$12$..."}'
+   ```
+
+### Default Test Users
+
+- **Username**: `JustinMenezes`, **Password**: `386canalst`
+- **Username**: `FelipeCardozo`, **Password**: `26cmu`
+
+### Generate Password Hashes
+
+To create hashes for new users:
+
+```bash
+python3 generate_password_hash.py <password>
+```
+
+### Disable Authentication (Development Only)
+
+```bash
+export AUTH_ENABLED="false"
+```
+
+For more details, see `STEP4_AUTHENTICATION_COMPLETE.md`.
+
+---
+
 ## Configuration
 
 Edit `config/config.yaml` to customize system behavior:
@@ -242,38 +369,38 @@ Edit `config/config.yaml` to customize system behavior:
 
 ```yaml
 camera:
-  index: 0           # V4L2 device index (0 = /dev/video0)
-  width: 1280        # Resolution width in pixels
-  height: 720        # Resolution height in pixels
-  fps: 30            # Target frames per second
+ index: 0 # V4L2 device index (0 = /dev/video0)
+ width: 1280 # Resolution width in pixels
+ height: 720 # Resolution height in pixels
+ fps: 30 # Target frames per second
 ```
 
 ### Detection Settings
 
 ```yaml
 detector:
-  model_path: best.pt           # Path to YOLO model
-  conf_threshold: 0.25          # Confidence threshold (0.0 to 1.0)
-  iou_threshold: 0.45           # NMS IoU threshold (0.0 to 1.0)
-  imgsz: 640                    # YOLO input size (320, 416, 640, 1280)
-  device: '0'                   # '0' for GPU, 'cpu' for CPU
-  half: true                    # FP16 precision (recommended for Jetson)
+ model_path: best.pt # Path to YOLO model
+ conf_threshold: 0.25 # Confidence threshold (0.0 to 1.0)
+ iou_threshold: 0.45 # NMS IoU threshold (0.0 to 1.0)
+ imgsz: 640 # YOLO input size (320, 416, 640, 1280)
+ device: '0' # '0' for GPU, 'cpu' for CPU
+ half: true # FP16 precision (recommended for Jetson)
 ```
 
 ### Inventory Smoothing
 
 ```yaml
 inventory:
-  smoothing_window: 10          # Number of frames to average
-  smoothing_method: median      # Smoothing method: median, mean, or mode
+ smoothing_window: 10 # Number of frames to average
+ smoothing_method: median # Smoothing method: median, mean, or mode
 ```
 
 ### Web Server
 
 ```yaml
 server:
-  host: '0.0.0.0'              # Listen on all interfaces
-  port: 8080                   # HTTP port
+ host: '0.0.0.0' # Listen on all interfaces
+ port: 8080 # HTTP port
 ```
 
 ### Performance Tuning
@@ -458,16 +585,16 @@ v4l2-ctl --list-formats-ext -d /dev/video0
 **Solutions**:
 
 1. Enable half precision in `config.yaml`:
-   ```yaml
-   detector:
-     half: true
-   ```
+ ```yaml
+ detector:
+ half: true
+ ```
 
 2. Reduce input size:
-   ```yaml
-   detector:
-     imgsz: 416  # or 320
-   ```
+ ```yaml
+ detector:
+ imgsz: 416 # or 320
+ ```
 
 3. Close other applications using GPU resources
 
@@ -476,29 +603,29 @@ v4l2-ctl --list-formats-ext -d /dev/video0
 **Solutions**:
 
 1. Lower camera resolution:
-   ```yaml
-   camera:
-     width: 640
-     height: 480
-   ```
+ ```yaml
+ camera:
+ width: 640
+ height: 480
+ ```
 
 2. Reduce streaming FPS:
-   ```yaml
-   stream:
-     target_fps: 15
-   ```
+ ```yaml
+ stream:
+ target_fps: 15
+ ```
 
 3. Lower YOLO input size:
-   ```yaml
-   detector:
-     imgsz: 416
-   ```
+ ```yaml
+ detector:
+ imgsz: 416
+ ```
 
 4. Enable maximum performance mode:
-   ```bash
-   sudo nvpmodel -m 0
-   sudo jetson_clocks
-   ```
+ ```bash
+ sudo nvpmodel -m 0
+ sudo jetson_clocks
+ ```
 
 ### Service Won't Start
 
@@ -519,26 +646,26 @@ chmod +x ~/Jetson-Orin-Inventory-Vision-System/backend/main.py
 ### Web Interface Not Loading
 
 1. Check if service is running:
-   ```bash
-   sudo systemctl status pokebowl-inventory
-   ```
+ ```bash
+ sudo systemctl status pokebowl-inventory
+ ```
 
 2. Test direct connection:
-   ```bash
-   curl http://localhost:8080
-   ```
+ ```bash
+ curl http://localhost:8080
+ ```
 
 3. Check firewall settings:
-   ```bash
-   sudo ufw status
-   sudo ufw allow 8080
-   ```
+ ```bash
+ sudo ufw status
+ sudo ufw allow 8080
+ ```
 
 4. Verify network access:
-   ```bash
-   ifconfig  # Note the IP address
-   # Access from another device: http://<jetson-ip>:8080
-   ```
+ ```bash
+ ifconfig # Note the IP address
+ # Access from another device: http://<jetson-ip>:8080
+ ```
 
 ---
 
@@ -607,12 +734,12 @@ To retrain the model with new data:
 ```python
 from ultralytics import YOLO
 
-model = YOLO('yolo11n.pt')  # or yolov8n.pt
+model = YOLO('yolo11n.pt') # or yolov8n.pt
 results = model.train(
-    data='dataset/pokebowl_dataset/data.yaml',
-    epochs=100,
-    imgsz=640,
-    device=0
+ data='dataset/pokebowl_dataset/data.yaml',
+ epochs=100,
+ imgsz=640,
+ device=0
 )
 ```
 
@@ -629,11 +756,11 @@ results = model.train(
 3. **Add authentication**: Implement authentication in `backend/server.py` (not included by default)
 4. **Use HTTPS**: Deploy behind a reverse proxy (nginx or caddy) with SSL certificates
 5. **Configure firewall rules**:
-   ```bash
-   sudo ufw enable
-   sudo ufw allow 22     # SSH
-   sudo ufw allow 8080   # Web interface (or your custom port)
-   ```
+ ```bash
+ sudo ufw enable
+ sudo ufw allow 22 # SSH
+ sudo ufw allow 8080 # Web interface (or your custom port)
+ ```
 
 ### Current Security Status
 
@@ -715,11 +842,12 @@ For issues, questions, or feature requests:
 
 ### Additional Documentation
 
-- **INDEX.md** - Documentation navigation guide
 - **QUICKSTART.md** - Fast setup instructions
 - **ARCHITECTURE.md** - Technical architecture details
-- **SYSTEM_DIAGRAM.md** - Visual system diagrams
 - **DEPLOYMENT_CHECKLIST.md** - Production deployment guide
+- **PERSISTENCE_GUIDE.md** - Data persistence and database management
+- **STEP2_SALES_ATTRIBUTION_COMPLETE.md** - Per-product sales attribution guide
+- **PROJECT_STATUS_REPORT.md** - Comprehensive project status and analysis
 
 ---
 
