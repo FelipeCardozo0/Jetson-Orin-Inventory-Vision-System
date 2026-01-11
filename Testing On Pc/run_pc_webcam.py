@@ -45,7 +45,7 @@ def list_available_cameras():
                     'index': i,
                     'resolution': f"{width}x{height}"
                 })
-                logger.info(f"  ✓ Camera {i}: {width}x{height}")
+                logger.info(f"  [OK] Camera {i}: {width}x{height}")
             cap.release()
     
     return available
@@ -60,16 +60,16 @@ def check_pc_webcam():
             ret, frame = cap.read()
             cap.release()
             if ret:
-                logger.info("✓ PC webcam (index 0) test successful")
+                logger.info("[OK] PC webcam (index 0) test successful")
                 return True
             else:
-                logger.warning("✗ PC webcam opened but cannot read frames")
+                logger.warning("[FAIL] PC webcam opened but cannot read frames")
                 return False
         else:
-            logger.error("✗ Cannot open PC webcam at index 0")
+            logger.error("[FAIL] Cannot open PC webcam at index 0")
             return False
     except Exception as e:
-        logger.error(f"✗ PC webcam test failed: {e}")
+        logger.error(f"[FAIL] PC webcam test failed: {e}")
         return False
 
 
@@ -77,10 +77,10 @@ def check_model():
     """Check if YOLO model exists"""
     model_path = PARENT_DIR / 'best.pt'
     if model_path.exists():
-        logger.info(f"✓ YOLO model found: {model_path}")
+        logger.info(f"[OK] YOLO model found: {model_path}")
         return True
     else:
-        logger.error(f"✗ YOLO model not found: {model_path}")
+        logger.error(f"[FAIL] YOLO model not found: {model_path}")
         return False
 
 
@@ -97,10 +97,10 @@ def check_dependencies():
                 import yaml
             else:
                 __import__(package)
-            logger.info(f"✓ {package} installed")
+            logger.info(f"[OK] {package} installed")
         except ImportError:
             missing.append(package)
-            logger.error(f"✗ {package} not installed")
+            logger.error(f"[FAIL] {package} not installed")
     
     return len(missing) == 0
 
@@ -141,11 +141,9 @@ def run_system():
             logger.warning(f"  - Camera {cam['index']}: {cam['resolution']}")
         logger.warning("\nIf your PC webcam is at a different index, edit pc_config.yaml")
         logger.warning("Or use: python3 run_phone_camera.py for phone camera")
-        response = input("\nContinue anyway? (y/n): ")
-        if response.lower() != 'y':
-            return False
+        logger.warning("Continuing anyway...")
     
-    logger.info("\n✓ All pre-flight checks passed")
+    logger.info("\n[OK] All pre-flight checks passed")
     logger.info("")
     
     # Import and run the original system
@@ -154,17 +152,24 @@ def run_system():
         
         from camera import USBCamera
         
-        # Patch camera opening for Mac compatibility (V4L2 is Linux-only)
+        # Patch camera opening for Mac/Windows compatibility (V4L2 is Linux-only)
         import platform
         original_open = USBCamera.open
         
         def mac_compatible_open(self):
-            """Mac-compatible camera open that uses default backend instead of V4L2"""
+            """Mac/Windows-compatible camera open that uses default backend instead of V4L2"""
             try:
                 import cv2
-                # Use default backend on Mac (not V4L2)
-                if platform.system() == 'Darwin':  # macOS
+                system = platform.system()
+                # Use appropriate backend based on OS
+                if system == 'Darwin':  # macOS
                     self.cap = cv2.VideoCapture(self.camera_index)
+                elif system == 'Windows':  # Windows - try DirectShow first
+                    try:
+                        self.cap = cv2.VideoCapture(self.camera_index, cv2.CAP_DSHOW)
+                    except:
+                        # Fallback to default backend if DirectShow fails
+                        self.cap = cv2.VideoCapture(self.camera_index)
                 else:
                     # Use original method for Linux
                     self.cap = cv2.VideoCapture(self.camera_index, cv2.CAP_V4L2)
@@ -178,8 +183,9 @@ def run_system():
                 self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, self.height)
                 self.cap.set(cv2.CAP_PROP_FPS, self.fps)
                 
-                # On Mac, skip V4L2-specific settings
-                if platform.system() != 'Darwin':
+                # On Mac/Windows, skip V4L2-specific settings
+                system = platform.system()
+                if system not in ('Darwin', 'Windows'):
                     # Set MJPEG format for better USB bandwidth utilization (Linux only)
                     self.cap.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc(*'MJPG'))
                 
@@ -210,7 +216,7 @@ def run_system():
         import asyncio
         import yaml
         
-        logger.info("✓ Modules imported successfully")
+        logger.info("[OK] Modules imported successfully")
         logger.info("")
         
         # Load PC configuration
@@ -231,7 +237,7 @@ def run_system():
             logger.error("Failed to open PC webcam")
             return False
         
-        logger.info(f"✓ Camera: {camera.get_info()}")
+        logger.info(f"[OK] Camera: {camera.get_info()}")
         
         # Initialize detector (original code)
         model_path = PARENT_DIR / config['detector']['model_path']
@@ -249,7 +255,7 @@ def run_system():
             camera.release()
             return False
         
-        logger.info(f"✓ Detector: {detector.get_info()}")
+        logger.info(f"[OK] Detector: {detector.get_info()}")
         
         # Warmup
         detector.warmup(num_iterations=3)
@@ -261,7 +267,7 @@ def run_system():
             class_names=detector.class_names
         )
         
-        logger.info("✓ Inventory tracker initialized")
+        logger.info("[OK] Inventory tracker initialized")
         
         # Initialize web server (original code)
         frontend_dir = PARENT_DIR / 'frontend'
@@ -282,7 +288,7 @@ def run_system():
             target_fps=config['stream']['target_fps']
         )
         
-        logger.info("✓ Stream manager initialized")
+        logger.info("[OK] Stream manager initialized")
         logger.info("")
         
         # Run the system (original async code)
