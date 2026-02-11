@@ -20,15 +20,29 @@ bash install_pc_dependencies.sh
 
 ### 2. Run the System
 
+**Option A: Switchable Camera Mode (Recommended)**
+
+```bash
+python3 run_pc_switchable.py
+```
+
+Allows switching between webcam and phone camera via web UI without restart.
+
+**Option B: Fixed Webcam Mode**
+
 ```bash
 python3 run_pc_test.py
 ```
 
-The system will:
-- Use your PC's default webcam (camera index 0)
-- Run YOLO inference on CPU (or GPU if available)
-- Start the web interface at http://localhost:8080
-- Display live detection and inventory counts
+Uses PC webcam only (camera index 0).
+
+**Option C: Fixed Phone Camera Mode**
+
+```bash
+python3 run_phone_camera.py
+```
+
+Uses phone camera only (camera index 1, requires iPhone via USB).
 
 ### 3. Access Web Interface
 
@@ -43,10 +57,16 @@ Press `Ctrl+C` in the terminal
 ### Files in This Folder
 
 - **install_pc_dependencies.sh** - Installs PC-compatible Python packages
-- **run_pc_test.py** - Main launcher that imports and runs the original project
-- **pc_config.yaml** - PC-specific configuration (overrides via environment)
+- **run_pc_test.py** - Main launcher (webcam only)
+- **run_pc_switchable.py** - NEW: Switchable camera launcher (webcam + phone)
+- **run_phone_camera.py** - Phone camera launcher
+- **pc_config.yaml** - PC webcam configuration
+- **phone_config.yaml** - Phone camera configuration
+- **pc_camera_switch.py** - Camera switching logic (for switchable mode)
 - **requirements_pc.txt** - PC-specific dependencies
 - **README.md** - This file
+- **COMMANDS.md** - Quick command reference
+- **CAMERA_SWITCHING.md** - Camera switching documentation
 
 ### How It Works
 

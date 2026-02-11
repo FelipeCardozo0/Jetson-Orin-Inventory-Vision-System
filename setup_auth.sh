@@ -41,3 +41,4 @@ echo "  export AUTH_SESSION_TTL=\"86400\""
 echo "  export AUTH_USERS_JSON='$AUTH_USERS_JSON'"
 echo ""
 echo "=========================================="
+

@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data & Analytics - Poke Bowl Inventory</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background-color: #0f1419;
+            color: #e8eaed;
+            overflow-x: hidden;
+        }
+        /* ---- Sidebar ---- */
+        .sidebar-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1999; opacity: 0; pointer-events: none; transition: opacity .3s; }
+        .sidebar-overlay.active { opacity: 1; pointer-events: auto; }
+        .sidebar { position: fixed; top: 0; left: 0; width: 270px; height: 100vh; background: linear-gradient(180deg,#1a2332 0%,#151d28 100%); z-index: 2000; transform: translateX(-100%); transition: transform .3s ease; display: flex; flex-direction: column; border-right: 1px solid rgba(255,255,255,.08); box-shadow: 4px 0 24px rgba(0,0,0,.4); }
+        .sidebar.open { transform: translateX(0); }
+        .sidebar-header { display: flex; justify-content: space-between; align-items: center; padding: 20px 20px 16px; border-bottom: 1px solid rgba(255,255,255,.08); }
+        .sidebar-brand { font-size: 18px; font-weight: 700; color: #fff; }
+        .sidebar-close { background: none; border: none; color: #9aa0a6; font-size: 22px; cursor: pointer; padding: 4px 8px; border-radius: 6px; transition: all .15s; line-height: 1; }
+        .sidebar-close:hover { background: rgba(255,255,255,.08); color: #fff; }
+        .sidebar-nav { flex: 1; padding: 12px 10px; display: flex; flex-direction: column; gap: 2px; }
+        .sidebar-link { display: flex; align-items: center; gap: 12px; padding: 12px 14px; color: #9aa0a6; text-decoration: none; border-radius: 8px; font-size: 14px; font-weight: 500; transition: all .15s; }
+        .sidebar-link:hover { background: rgba(255,255,255,.06); color: #e8eaed; }
+        .sidebar-link.active { background: rgba(76,175,80,.12); color: #4CAF50; font-weight: 600; }
+        .sidebar-link svg { width: 20px; height: 20px; fill: currentColor; flex-shrink: 0; }
+        /* ---- Header ---- */
+        .menu-btn { background: none; border: 1px solid rgba(255,255,255,.1); color: #e8eaed; cursor: pointer; padding: 8px; border-radius: 8px; display: flex; align-items: center; justify-content: center; transition: all .2s; margin-right: 12px; }
+        .menu-btn:hover { background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.2); }
+        .menu-btn svg { width: 20px; height: 20px; fill: currentColor; }
+        .header-left { display: flex; align-items: center; }
+        .container { display: flex; flex-direction: column; min-height: 100vh; padding: 16px; max-width: 1400px; margin: 0 auto; }
+        header { background: linear-gradient(135deg,#1e2936 0%,#252f3d 100%); padding: 16px 24px; border-radius: 12px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 6px rgba(0,0,0,.3); border: 1px solid rgba(255,255,255,.05); }
+        h1 { font-size: 22px; font-weight: 700; color: #fff; letter-spacing: -.5px; }
+        .header-actions { display: flex; gap: 10px; align-items: center; }
+        .back-link, .export-btn { color: #9aa0a6; text-decoration: none; font-size: 13px; font-weight: 500; padding: 8px 14px; border: 1px solid rgba(255,255,255,.1); border-radius: 8px; transition: all .2s; cursor: pointer; background: none; font-family: inherit; }
+        .back-link:hover, .export-btn:hover { color: #e8eaed; border-color: rgba(255,255,255,.2); background: rgba(255,255,255,.04); }
+        .export-btn { color: #4CAF50; border-color: rgba(76,175,80,.3); }
+        .export-btn:hover { background: rgba(76,175,80,.1); border-color: rgba(76,175,80,.5); }
+        /* ---- Panels ---- */
+        .panel { background: linear-gradient(135deg,#1e2936 0%,#252f3d 100%); border-radius: 12px; padding: 24px; box-shadow: 0 4px 6px rgba(0,0,0,.3); border: 1px solid rgba(255,255,255,.05); margin-bottom: 16px; }
+        .panel-title { font-size: 16px; font-weight: 600; color: #fff; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,.08); }
+        /* Summary cards */
+        .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin-bottom: 16px; }
+        .kpi-card { background: rgba(15,20,25,.6); border-radius: 10px; padding: 20px; display: flex; flex-direction: column; gap: 6px; border-left: 3px solid #4CAF50; }
+        .kpi-card.blue { border-left-color: #2196F3; }
+        .kpi-card.orange { border-left-color: #FF9800; }
+        .kpi-label { font-size: 12px; color: #9aa0a6; text-transform: uppercase; letter-spacing: .5px; font-weight: 500; }
+        .kpi-value { font-size: 28px; font-weight: 700; color: #4CAF50; }
+        .kpi-card.blue .kpi-value { color: #2196F3; }
+        .kpi-card.orange .kpi-value { color: #FF9800; }
+        .kpi-sub { font-size: 12px; color: #666; }
+        /* Tables */
+        .data-table { width: 100%; border-collapse: collapse; }
+        .data-table th, .data-table td { padding: 10px 14px; text-align: left; font-size: 13px; border-bottom: 1px solid rgba(255,255,255,.06); }
+        .data-table th { color: #9aa0a6; font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: .5px; }
+        .data-table td { color: #e8eaed; }
+        .data-table tr:hover td { background: rgba(255,255,255,.03); }
+        /* Tabs */
+        .tabs { display: flex; gap: 4px; margin-bottom: 16px; }
+        .tab-btn { padding: 8px 16px; border: 1px solid rgba(255,255,255,.1); background: none; color: #9aa0a6; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 500; transition: all .15s; font-family: inherit; }
+        .tab-btn:hover { color: #e8eaed; border-color: rgba(255,255,255,.2); }
+        .tab-btn.active { background: rgba(76,175,80,.12); color: #4CAF50; border-color: rgba(76,175,80,.3); font-weight: 600; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        /* Bar chart (CSS-only) */
+        .bar-chart { display: flex; flex-direction: column; gap: 8px; }
+        .bar-row { display: flex; align-items: center; gap: 10px; }
+        .bar-label { width: 90px; font-size: 12px; color: #9aa0a6; text-align: right; flex-shrink: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .bar-track { flex: 1; height: 22px; background: rgba(15,20,25,.6); border-radius: 4px; overflow: hidden; position: relative; }
+        .bar-fill { height: 100%; background: linear-gradient(90deg,#4CAF50, #66BB6A); border-radius: 4px; transition: width .4s ease; min-width: 2px; }
+        .bar-fill.blue { background: linear-gradient(90deg,#2196F3,#42A5F5); }
+        .bar-val { width: 50px; font-size: 12px; color: #e8eaed; font-weight: 600; }
+        /* Loading */
+        .loading { text-align: center; padding: 48px; color: #666; font-size: 14px; }
+        .loading .spinner { width: 24px; height: 24px; border: 2px solid #4CAF50; border-top-color: transparent; border-radius: 50%; animation: spin .8s linear infinite; margin: 0 auto 12px; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        /* DB info */
+        .db-info { display: flex; gap: 24px; flex-wrap: wrap; }
+        .db-stat { font-size: 13px; color: #9aa0a6; }
+        .db-stat strong { color: #e8eaed; }
+    </style>
+</head>
+<body>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <span class="sidebar-brand">Poke Bowl</span>
+            <button class="sidebar-close" id="sidebarClose">&times;</button>
+        </div>
+        <div class="sidebar-nav">
+            <a href="index.html" class="sidebar-link"><svg viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg><span>Dashboard</span></a>
+            <a href="upload.html" class="sidebar-link"><svg viewBox="0 0 24 24"><path d="M9 16h6v-6h4l-7-7-7 7h4v6zm-4 2h14v2H5v-2z"/></svg><span>Upload</span></a>
+            <a href="analytics.html" class="sidebar-link active"><svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14H5V7h7v10z"/><path d="M6 9h4v2H6zm0 3h4v2H6zm0 3h4v2H6zm7-6h4v8h-4z"/></svg><span>Data & Analytics</span></a>
+            <a href="account.html" class="sidebar-link"><svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg><span>Account</span></a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <header>
+            <div class="header-left">
+                <button class="menu-btn" id="menuBtn" title="Open menu">
+                    <svg viewBox="0 0 24 24"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
+                </button>
+                <h1>Data &amp; Analytics</h1>
+            </div>
+            <div class="header-actions">
+                <button class="export-btn" id="exportBtn" title="Download Excel">
+                    <svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:currentColor;vertical-align:-2px;margin-right:4px"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+                    Export Excel
+                </button>
+                <a href="index.html" class="back-link">Back to Dashboard</a>
+            </div>
+        </header>
+
+        <div id="loadingState" class="loading">
+            <div class="spinner"></div>
+            Loading analytics data...
+        </div>
+
+        <div id="mainContent" style="display:none;">
+            <!-- KPI cards -->
+            <div class="kpi-grid" id="kpiGrid"></div>
+
+            <!-- Trend tabs -->
+            <div class="panel">
+                <div class="panel-title">Sales Trends</div>
+                <div class="tabs">
+                    <button class="tab-btn active" data-tab="daily">Daily</button>
+                    <button class="tab-btn" data-tab="weekly">Weekly</button>
+                    <button class="tab-btn" data-tab="monthly">Monthly</button>
+                </div>
+                <div class="tab-content active" id="tab-daily">
+                    <div class="bar-chart" id="dailyChart"></div>
+                </div>
+                <div class="tab-content" id="tab-weekly">
+                    <div class="bar-chart" id="weeklyChart"></div>
+                </div>
+                <div class="tab-content" id="tab-monthly">
+                    <div class="bar-chart" id="monthlyChart"></div>
+                </div>
+            </div>
+
+            <!-- Product breakdown -->
+            <div class="panel">
+                <div class="panel-title">Product Breakdown (Last 30 Days)</div>
+                <div id="productChart" class="bar-chart" style="margin-bottom:16px;"></div>
+                <table class="data-table" id="productTable">
+                    <thead><tr><th>Product</th><th>Total Qty Sold</th><th>Sale Events</th></tr></thead>
+                    <tbody id="productTableBody"></tbody>
+                </table>
+            </div>
+
+            <!-- Low stock frequency -->
+            <div class="panel">
+                <div class="panel-title">Low-Stock Alert Frequency (Last 30 Days)</div>
+                <div id="lowStockSection"></div>
+            </div>
+
+            <!-- DB stats -->
+            <div class="panel">
+                <div class="panel-title">Database Overview</div>
+                <div class="db-info" id="dbInfo"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sidebar
+        const menuBtn = document.getElementById('menuBtn');
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+        const sidebarClose = document.getElementById('sidebarClose');
+        function openSidebar() { sidebar.classList.add('open'); sidebarOverlay.classList.add('active'); }
+        function closeSidebar() { sidebar.classList.remove('open'); sidebarOverlay.classList.remove('active'); }
+        menuBtn.addEventListener('click', openSidebar);
+        sidebarClose.addEventListener('click', closeSidebar);
+        sidebarOverlay.addEventListener('click', closeSidebar);
+
+        // Tabs
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                btn.classList.add('active');
+                document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+            });
+        });
+
+        // Export
+        document.getElementById('exportBtn').addEventListener('click', () => {
+            window.location.href = '/api/analytics/export';
+        });
+
+        // Load data
+        async function loadAnalytics() {
+            try {
+                const res = await fetch('/api/analytics/summary', { credentials: 'same-origin' });
+                if (res.status === 401) { window.location.href = '/login'; return; }
+                const data = await res.json();
+                if (!data.success) { document.getElementById('loadingState').textContent = 'Failed to load: ' + data.message; return; }
+                render(data);
+            } catch (err) {
+                document.getElementById('loadingState').textContent = 'Network error: ' + err.message;
+            }
+        }
+
+        function render(data) {
+            document.getElementById('loadingState').style.display = 'none';
+            document.getElementById('mainContent').style.display = 'block';
+
+            const s = data.summary;
+            const kpiGrid = document.getElementById('kpiGrid');
+            kpiGrid.innerHTML = '';
+            kpiGrid.appendChild(kpi('Today', s.today.total_qty, `${s.today.sale_count} events`, ''));
+            kpiGrid.appendChild(kpi('This Week', s.week.total_qty, `${s.week.sale_count} events`, 'blue'));
+            kpiGrid.appendChild(kpi('This Month', s.month.total_qty, `${s.month.sale_count} events`, 'orange'));
+
+            // Trends
+            renderBarChart('dailyChart', data.daily_trend.map(r => ({ label: r.date ? r.date.slice(5) : '?', value: r.total_qty })), false);
+            renderBarChart('weeklyChart', data.weekly_trend.map(r => ({ label: r.week || '?', value: r.total_qty })), true);
+            renderBarChart('monthlyChart', data.monthly_trend.map(r => ({ label: r.month || '?', value: r.total_qty })), true);
+
+            // Product breakdown
+            const maxProd = Math.max(...data.product_breakdown.map(p => p.total_qty), 1);
+            const prodChart = document.getElementById('productChart');
+            prodChart.innerHTML = '';
+            data.product_breakdown.slice(0, 15).forEach(p => {
+                prodChart.appendChild(barRow(p.product, p.total_qty, maxProd, false));
+            });
+            const prodBody = document.getElementById('productTableBody');
+            prodBody.innerHTML = '';
+            data.product_breakdown.forEach(p => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td>${p.product}</td><td>${p.total_qty}</td><td>${p.sale_count}</td>`;
+                prodBody.appendChild(tr);
+            });
+
+            // Low stock
+            const lowSection = document.getElementById('lowStockSection');
+            if (data.low_stock_frequency.length === 0) {
+                lowSection.innerHTML = '<div style="color:#666;text-align:center;padding:24px;">No low-stock alerts in the last 30 days.</div>';
+            } else {
+                const maxAlert = Math.max(...data.low_stock_frequency.map(a => a.alert_count), 1);
+                const chart = document.createElement('div');
+                chart.className = 'bar-chart';
+                data.low_stock_frequency.forEach(a => {
+                    chart.appendChild(barRow(a.product, a.alert_count, maxAlert, true));
+                });
+                lowSection.innerHTML = '';
+                lowSection.appendChild(chart);
+            }
+
+            // DB stats
+            const db = data.database;
+            const dbInfo = document.getElementById('dbInfo');
+            dbInfo.innerHTML = `
+                <div class="db-stat">Total Sales Records: <strong>${db.total_sales.toLocaleString()}</strong></div>
+                <div class="db-stat">Inventory Snapshots: <strong>${db.total_snapshots.toLocaleString()}</strong></div>
+                <div class="db-stat">Alert Records: <strong>${db.total_alerts.toLocaleString()}</strong></div>
+            `;
+        }
+
+        function kpi(label, value, sub, cls) {
+            const div = document.createElement('div');
+            div.className = 'kpi-card' + (cls ? ' ' + cls : '');
+            div.innerHTML = `<div class="kpi-label">${label}</div><div class="kpi-value">${value}</div><div class="kpi-sub">${sub}</div>`;
+            return div;
+        }
+
+        function renderBarChart(containerId, items, isBlue) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+            if (items.length === 0) { container.innerHTML = '<div style="color:#666;text-align:center;padding:24px;">No data available.</div>'; return; }
+            const max = Math.max(...items.map(i => i.value), 1);
+            items.forEach(item => container.appendChild(barRow(item.label, item.value, max, isBlue)));
+        }
+
+        function barRow(label, value, max, isBlue) {
+            const row = document.createElement('div');
+            row.className = 'bar-row';
+            const pct = Math.round((value / max) * 100);
+            row.innerHTML = `
+                <div class="bar-label" title="${label}">${label}</div>
+                <div class="bar-track"><div class="bar-fill${isBlue ? ' blue' : ''}" style="width:${pct}%"></div></div>
+                <div class="bar-val">${value}</div>
+            `;
+            return row;
+        }
+
+        loadAnalytics();
+    </script>
+</body>
+</html>
+

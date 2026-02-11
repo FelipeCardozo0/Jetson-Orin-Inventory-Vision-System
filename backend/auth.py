@@ -244,6 +244,36 @@ class AuthManager:
         """
         return self.session_manager.get_username_from_session(token)
 
+    def change_password(self, username: str, current_password: str, new_password: str) -> Tuple[bool, str]:
+        """
+        Change password for a user after verifying the current password.
+
+        Args:
+            username: Username whose password to change
+            current_password: Current plaintext password for verification
+            new_password: New plaintext password
+
+        Returns:
+            Tuple of (success, message)
+        """
+        if username not in self.users:
+            return False, "User not found"
+
+        if not self.verify_password(username, current_password):
+            return False, "Current password is incorrect"
+
+        if len(new_password) < 8:
+            return False, "New password must be at least 8 characters"
+
+        if BCRYPT_AVAILABLE:
+            new_hash = generate_password_hash(new_password)
+        else:
+            new_hash = new_password
+
+        self.users[username] = new_hash
+        logger.info(f"Password changed for user: {username}")
+        return True, "Password changed successfully"
+
 
 def load_auth_config() -> Tuple[bool, Optional[AuthManager]]:
     """
@@ -333,3 +363,4 @@ if __name__ == '__main__':
     else:
         print("Authentication module")
         print("Usage: python3 auth.py generate-hash <password>")
+

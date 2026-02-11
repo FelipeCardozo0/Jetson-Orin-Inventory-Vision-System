@@ -108,3 +108,4 @@ for key, value in TRAINING_CONFIG.items():
 print("="*80)
 print("\n⚠️  This is a SAFE configuration that will definitely work.")
 print("After training succeeds, you can gradually add augmentation back.")
+

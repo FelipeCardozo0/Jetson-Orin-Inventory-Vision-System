@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload - Poke Bowl Inventory</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background-color: #0f1419;
+            color: #e8eaed;
+            overflow-x: hidden;
+        }
+        /* ---- Sidebar ---- */
+        .sidebar-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1999; opacity: 0; pointer-events: none; transition: opacity .3s; }
+        .sidebar-overlay.active { opacity: 1; pointer-events: auto; }
+        .sidebar { position: fixed; top: 0; left: 0; width: 270px; height: 100vh; background: linear-gradient(180deg,#1a2332 0%,#151d28 100%); z-index: 2000; transform: translateX(-100%); transition: transform .3s ease; display: flex; flex-direction: column; border-right: 1px solid rgba(255,255,255,.08); box-shadow: 4px 0 24px rgba(0,0,0,.4); }
+        .sidebar.open { transform: translateX(0); }
+        .sidebar-header { display: flex; justify-content: space-between; align-items: center; padding: 20px 20px 16px; border-bottom: 1px solid rgba(255,255,255,.08); }
+        .sidebar-brand { font-size: 18px; font-weight: 700; color: #fff; }
+        .sidebar-close { background: none; border: none; color: #9aa0a6; font-size: 22px; cursor: pointer; padding: 4px 8px; border-radius: 6px; transition: all .15s; line-height: 1; }
+        .sidebar-close:hover { background: rgba(255,255,255,.08); color: #fff; }
+        .sidebar-nav { flex: 1; padding: 12px 10px; display: flex; flex-direction: column; gap: 2px; }
+        .sidebar-link { display: flex; align-items: center; gap: 12px; padding: 12px 14px; color: #9aa0a6; text-decoration: none; border-radius: 8px; font-size: 14px; font-weight: 500; transition: all .15s; }
+        .sidebar-link:hover { background: rgba(255,255,255,.06); color: #e8eaed; }
+        .sidebar-link.active { background: rgba(76,175,80,.12); color: #4CAF50; font-weight: 600; }
+        .sidebar-link svg { width: 20px; height: 20px; fill: currentColor; flex-shrink: 0; }
+        /* ---- Header ---- */
+        .menu-btn { background: none; border: 1px solid rgba(255,255,255,.1); color: #e8eaed; cursor: pointer; padding: 8px; border-radius: 8px; display: flex; align-items: center; justify-content: center; transition: all .2s; margin-right: 12px; }
+        .menu-btn:hover { background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.2); }
+        .menu-btn svg { width: 20px; height: 20px; fill: currentColor; }
+        .header-left { display: flex; align-items: center; }
+        .container { display: flex; flex-direction: column; min-height: 100vh; padding: 16px; max-width: 1200px; margin: 0 auto; }
+        header { background: linear-gradient(135deg,#1e2936 0%,#252f3d 100%); padding: 16px 24px; border-radius: 12px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 6px rgba(0,0,0,.3); border: 1px solid rgba(255,255,255,.05); }
+        h1 { font-size: 22px; font-weight: 700; color: #fff; letter-spacing: -.5px; }
+        .back-link { color: #9aa0a6; text-decoration: none; font-size: 13px; font-weight: 500; padding: 8px 14px; border: 1px solid rgba(255,255,255,.1); border-radius: 8px; transition: all .2s; }
+        .back-link:hover { color: #e8eaed; border-color: rgba(255,255,255,.2); background: rgba(255,255,255,.04); }
+        /* ---- Upload Area ---- */
+        .panel { background: linear-gradient(135deg,#1e2936 0%,#252f3d 100%); border-radius: 12px; padding: 24px; box-shadow: 0 4px 6px rgba(0,0,0,.3); border: 1px solid rgba(255,255,255,.05); margin-bottom: 16px; }
+        .panel-title { font-size: 18px; font-weight: 600; margin-bottom: 16px; color: #fff; }
+        .drop-zone { border: 2px dashed rgba(76,175,80,.35); border-radius: 12px; padding: 48px 24px; text-align: center; cursor: pointer; transition: all .2s; background: rgba(76,175,80,.03); }
+        .drop-zone:hover, .drop-zone.drag-over { border-color: #4CAF50; background: rgba(76,175,80,.08); }
+        .drop-zone svg { width: 48px; height: 48px; fill: #4CAF50; margin-bottom: 12px; }
+        .drop-zone p { color: #9aa0a6; font-size: 14px; margin-bottom: 8px; }
+        .drop-zone .hint { font-size: 12px; color: #666; }
+        .file-input { display: none; }
+        /* ---- Status ---- */
+        .status-bar { display: none; align-items: center; gap: 12px; padding: 14px 18px; border-radius: 8px; margin-top: 16px; font-size: 13px; font-weight: 500; }
+        .status-bar.processing { display: flex; background: rgba(33,150,243,.1); border: 1px solid rgba(33,150,243,.25); color: #2196F3; }
+        .status-bar.success { display: flex; background: rgba(76,175,80,.1); border: 1px solid rgba(76,175,80,.25); color: #4CAF50; }
+        .status-bar.error { display: flex; background: rgba(244,67,54,.1); border: 1px solid rgba(244,67,54,.25); color: #f44336; }
+        .spinner { width: 18px; height: 18px; border: 2px solid currentColor; border-top-color: transparent; border-radius: 50%; animation: spin .8s linear infinite; flex-shrink: 0; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        /* ---- Results ---- */
+        .results-section { display: none; }
+        .results-section.visible { display: block; }
+        .result-image-wrap { background: #0f1419; border-radius: 8px; overflow: hidden; margin-bottom: 16px; text-align: center; border: 1px solid rgba(255,255,255,.05); }
+        .result-image-wrap img { max-width: 100%; height: auto; display: block; margin: 0 auto; }
+        .summary-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; margin-bottom: 16px; }
+        .summary-card { background: rgba(15,20,25,.6); border-radius: 8px; padding: 14px 16px; border-left: 3px solid #4CAF50; }
+        .summary-card .label { font-size: 12px; color: #9aa0a6; margin-bottom: 4px; }
+        .summary-card .value { font-size: 22px; font-weight: 700; color: #4CAF50; }
+        .det-table { width: 100%; border-collapse: collapse; }
+        .det-table th, .det-table td { padding: 10px 14px; text-align: left; font-size: 13px; border-bottom: 1px solid rgba(255,255,255,.06); }
+        .det-table th { color: #9aa0a6; font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: .5px; }
+        .det-table td { color: #e8eaed; }
+        .det-table tr:hover td { background: rgba(255,255,255,.03); }
+    </style>
+</head>
+<body>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <span class="sidebar-brand">Poke Bowl</span>
+            <button class="sidebar-close" id="sidebarClose">&times;</button>
+        </div>
+        <div class="sidebar-nav">
+            <a href="index.html" class="sidebar-link"><svg viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg><span>Dashboard</span></a>
+            <a href="upload.html" class="sidebar-link active"><svg viewBox="0 0 24 24"><path d="M9 16h6v-6h4l-7-7-7 7h4v6zm-4 2h14v2H5v-2z"/></svg><span>Upload</span></a>
+            <a href="analytics.html" class="sidebar-link"><svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14H5V7h7v10z"/><path d="M6 9h4v2H6zm0 3h4v2H6zm0 3h4v2H6zm7-6h4v8h-4z"/></svg><span>Data & Analytics</span></a>
+            <a href="account.html" class="sidebar-link"><svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg><span>Account</span></a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <header>
+            <div class="header-left">
+                <button class="menu-btn" id="menuBtn" title="Open menu">
+                    <svg viewBox="0 0 24 24"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
+                </button>
+                <h1>Image Upload</h1>
+            </div>
+            <a href="index.html" class="back-link">Back to Dashboard</a>
+        </header>
+
+        <div class="panel">
+            <div class="panel-title">Upload Image for Detection</div>
+            <div class="drop-zone" id="dropZone">
+                <svg viewBox="0 0 24 24"><path d="M19.35 10.04A7.49 7.49 0 0012 4C9.11 4 6.6 5.64 5.35 8.04A5.994 5.994 0 000 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z"/></svg>
+                <p>Drag & drop an image here, or click to browse</p>
+                <div class="hint">Supported: JPEG, PNG, BMP, TIFF &mdash; Max 20 MB</div>
+            </div>
+            <input type="file" id="fileInput" class="file-input" accept="image/*">
+            <div class="status-bar" id="statusBar">
+                <div class="spinner" id="statusSpinner"></div>
+                <span id="statusText"></span>
+            </div>
+        </div>
+
+        <div class="results-section" id="resultsSection">
+            <div class="panel">
+                <div class="panel-title">Detection Results</div>
+                <div class="summary-grid" id="summaryGrid"></div>
+                <div class="result-image-wrap">
+                    <img id="resultImage" alt="Annotated detection result">
+                </div>
+            </div>
+            <div class="panel">
+                <div class="panel-title">Detected Items</div>
+                <table class="det-table">
+                    <thead><tr><th>Product</th><th>Confidence</th><th>Bounding Box</th></tr></thead>
+                    <tbody id="detTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sidebar
+        const menuBtn = document.getElementById('menuBtn');
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+        const sidebarClose = document.getElementById('sidebarClose');
+        function openSidebar() { sidebar.classList.add('open'); sidebarOverlay.classList.add('active'); }
+        function closeSidebar() { sidebar.classList.remove('open'); sidebarOverlay.classList.remove('active'); }
+        menuBtn.addEventListener('click', openSidebar);
+        sidebarClose.addEventListener('click', closeSidebar);
+        sidebarOverlay.addEventListener('click', closeSidebar);
+
+        // Upload
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+        const statusBar = document.getElementById('statusBar');
+        const statusText = document.getElementById('statusText');
+        const statusSpinner = document.getElementById('statusSpinner');
+        const resultsSection = document.getElementById('resultsSection');
+        const summaryGrid = document.getElementById('summaryGrid');
+        const resultImage = document.getElementById('resultImage');
+        const detTableBody = document.getElementById('detTableBody');
+
+        dropZone.addEventListener('click', () => fileInput.click());
+        dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+        dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+        dropZone.addEventListener('drop', e => {
+            e.preventDefault();
+            dropZone.classList.remove('drag-over');
+            if (e.dataTransfer.files.length) processFile(e.dataTransfer.files[0]);
+        });
+        fileInput.addEventListener('change', () => { if (fileInput.files.length) processFile(fileInput.files[0]); });
+
+        function setStatus(type, msg) {
+            statusBar.className = 'status-bar ' + type;
+            statusText.textContent = msg;
+            statusSpinner.style.display = type === 'processing' ? 'block' : 'none';
+        }
+
+        async function processFile(file) {
+            if (!file.type.startsWith('image/')) { setStatus('error', 'Please upload an image file.'); return; }
+            if (file.size > 20 * 1024 * 1024) { setStatus('error', 'Image exceeds 20 MB limit.'); return; }
+
+            setStatus('processing', `Processing ${file.name}...`);
+            resultsSection.classList.remove('visible');
+
+            const form = new FormData();
+            form.append('image', file);
+
+            try {
+                const res = await fetch('/api/upload/detect', { method: 'POST', body: form, credentials: 'same-origin' });
+                const data = await res.json();
+
+                if (!data.success) { setStatus('error', data.message || 'Detection failed'); return; }
+
+                setStatus('success', `Detected ${data.total_items} items in ${Object.keys(data.summary).length} categories`);
+                displayResults(data);
+            } catch (err) {
+                setStatus('error', 'Network error: ' + err.message);
+            }
+        }
+
+        function displayResults(data) {
+            // Summary cards
+            summaryGrid.innerHTML = '';
+            const totalCard = card('Total Items', data.total_items);
+            const catCard = card('Categories', Object.keys(data.summary).length);
+            summaryGrid.appendChild(totalCard);
+            summaryGrid.appendChild(catCard);
+            for (const [name, count] of Object.entries(data.summary).sort((a, b) => b[1] - a[1])) {
+                summaryGrid.appendChild(card(name, count));
+            }
+
+            // Annotated image
+            resultImage.src = 'data:image/jpeg;base64,' + data.annotated_image;
+
+            // Detections table
+            detTableBody.innerHTML = '';
+            data.detections.forEach(det => {
+                const tr = document.createElement('tr');
+                const bbox = det.bbox.map(v => Math.round(v)).join(', ');
+                tr.innerHTML = `<td>${det.class_name}</td><td>${(det.confidence * 100).toFixed(1)}%</td><td>${bbox}</td>`;
+                detTableBody.appendChild(tr);
+            });
+
+            resultsSection.classList.add('visible');
+        }
+
+        function card(label, value) {
+            const div = document.createElement('div');
+            div.className = 'summary-card';
+            div.innerHTML = `<div class="label">${label}</div><div class="value">${value}</div>`;
+            return div;
+        }
+    </script>
+</body>
+</html>
+

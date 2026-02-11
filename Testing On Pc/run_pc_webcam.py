@@ -269,12 +269,13 @@ def run_system():
         
         logger.info("[OK] Inventory tracker initialized")
         
-        # Initialize web server (original code)
+        # Initialize web server (original code) - AUTH DISABLED for PC webcam
         frontend_dir = PARENT_DIR / 'frontend'
         server = VideoStreamServer(
             host=config['server']['host'],
             port=config['server']['port'],
-            frontend_dir=frontend_dir
+            frontend_dir=frontend_dir,
+            enable_auth=False  # Bypass authentication for PC webcam testing
         )
         
         logger.info(f"✓ Web server configured")

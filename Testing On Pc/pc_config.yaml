@@ -3,7 +3,7 @@
 
 # Camera Settings (PC Webcam)
 camera:
-  index: 0              # 0 = built-in webcam, 1 = external USB camera
+  index: 1              # 1 = built-in webcam (phone camera is at index 0 on this system)
   width: 1280           # Resolution
   height: 720
   fps: 30

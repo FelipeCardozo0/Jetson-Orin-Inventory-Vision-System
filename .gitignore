@@ -74,3 +74,6 @@ htmlcov/
 *.pid
 *.sock
 
+# Run directory (logs and runtime files)
+run/
+!run/.gitkeep

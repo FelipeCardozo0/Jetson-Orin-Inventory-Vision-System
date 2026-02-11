@@ -283,3 +283,4 @@ Check: `runs/train/pokebowl_yolov8n_YYYYMMDD_HHMMSS/val_batch*_pred.jpg`
 **Questions?** Check `TRAINING_ANALYSIS.md` for detailed information.
 
 **Last Updated**: January 11, 2026
+

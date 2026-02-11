@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Poke Bowl Inventory System</title>
+    <title>Poke Bowl Inventory System - PC Testing</title>
     <style>
         * {
             margin: 0;
@@ -192,6 +192,58 @@
             font-size: 18px;
             font-weight: 600;
             color: #ffffff;
+        }
+
+        /* Camera Switch Controls */
+        .camera-switch-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .camera-switch-btn {
+            padding: 6px 14px;
+            background: rgba(33, 150, 243, 0.1);
+            border: 1px solid rgba(33, 150, 243, 0.3);
+            border-radius: 6px;
+            color: #2196F3;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            user-select: none;
+        }
+
+        .camera-switch-btn:hover {
+            background: rgba(33, 150, 243, 0.2);
+            border-color: rgba(33, 150, 243, 0.5);
+        }
+
+        .camera-switch-btn.active {
+            background: rgba(33, 150, 243, 0.25);
+            border-color: rgba(33, 150, 243, 0.6);
+            color: #ffffff;
+        }
+
+        .camera-switch-btn.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .camera-switch-status {
+            font-size: 11px;
+            color: #9aa0a6;
+            padding: 4px 8px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 4px;
+        }
+
+        .camera-switch-status.switching {
+            color: #FF9800;
+        }
+
+        .camera-switch-status.error {
+            color: #f44336;
         }
 
         .video-container {
@@ -545,259 +597,6 @@
             opacity: 0.8;
         }
 
-        /* Sidebar */
-        .sidebar-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 1999;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s ease;
-        }
-        .sidebar-overlay.active {
-            opacity: 1;
-            pointer-events: auto;
-        }
-        .sidebar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 270px;
-            height: 100vh;
-            background: linear-gradient(180deg, #1a2332 0%, #151d28 100%);
-            z-index: 2000;
-            transform: translateX(-100%);
-            transition: transform 0.3s ease;
-            display: flex;
-            flex-direction: column;
-            border-right: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 4px 0 24px rgba(0, 0, 0, 0.4);
-        }
-        .sidebar.open {
-            transform: translateX(0);
-        }
-        .sidebar-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 20px 16px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-        }
-        .sidebar-brand {
-            font-size: 18px;
-            font-weight: 700;
-            color: #ffffff;
-            letter-spacing: -0.3px;
-        }
-        .sidebar-close {
-            background: none;
-            border: none;
-            color: #9aa0a6;
-            font-size: 22px;
-            cursor: pointer;
-            padding: 4px 8px;
-            border-radius: 6px;
-            transition: all 0.15s;
-            line-height: 1;
-        }
-        .sidebar-close:hover {
-            background: rgba(255, 255, 255, 0.08);
-            color: #fff;
-        }
-        .sidebar-nav {
-            flex: 1;
-            padding: 12px 10px;
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-        }
-        .sidebar-link {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 14px;
-            color: #9aa0a6;
-            text-decoration: none;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 500;
-            transition: all 0.15s;
-        }
-        .sidebar-link:hover {
-            background: rgba(255, 255, 255, 0.06);
-            color: #e8eaed;
-        }
-        .sidebar-link.active {
-            background: rgba(76, 175, 80, 0.12);
-            color: #4CAF50;
-            font-weight: 600;
-        }
-        .sidebar-link svg {
-            width: 20px;
-            height: 20px;
-            fill: currentColor;
-            flex-shrink: 0;
-        }
-        .menu-btn {
-            background: none;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: #e8eaed;
-            cursor: pointer;
-            padding: 8px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s;
-            margin-right: 12px;
-        }
-        .menu-btn:hover {
-            background: rgba(255, 255, 255, 0.08);
-            border-color: rgba(255, 255, 255, 0.2);
-        }
-        .menu-btn svg {
-            width: 20px;
-            height: 20px;
-            fill: currentColor;
-        }
-        .header-left {
-            display: flex;
-            align-items: center;
-        }
-
-        /* Camera Switcher */
-        .camera-switcher {
-            position: relative;
-        }
-
-        .camera-switch-btn {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            padding: 6px 14px;
-            background: rgba(33, 150, 243, 0.1);
-            border: 1px solid rgba(33, 150, 243, 0.3);
-            border-radius: 6px;
-            color: #2196F3;
-            font-size: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            white-space: nowrap;
-            font-family: inherit;
-        }
-
-        .camera-switch-btn:hover {
-            background: rgba(33, 150, 243, 0.2);
-            border-color: rgba(33, 150, 243, 0.5);
-        }
-
-        .camera-switch-btn svg {
-            width: 14px;
-            height: 14px;
-            fill: currentColor;
-            flex-shrink: 0;
-        }
-
-        .camera-dropdown {
-            display: none;
-            position: absolute;
-            right: 0;
-            top: calc(100% + 6px);
-            min-width: 240px;
-            background: rgba(30, 41, 54, 0.98);
-            border: 1px solid rgba(33, 150, 243, 0.3);
-            border-radius: 8px;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
-            z-index: 1000;
-            overflow: hidden;
-        }
-
-        .camera-dropdown.open {
-            display: block;
-        }
-
-        .camera-dropdown-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 14px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-        }
-
-        .camera-dropdown-title {
-            font-size: 12px;
-            font-weight: 600;
-            color: #9aa0a6;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .camera-refresh-btn {
-            background: none;
-            border: none;
-            color: #2196F3;
-            cursor: pointer;
-            font-size: 11px;
-            font-weight: 600;
-            padding: 2px 6px;
-            border-radius: 4px;
-            transition: background 0.15s;
-            font-family: inherit;
-        }
-
-        .camera-refresh-btn:hover {
-            background: rgba(33, 150, 243, 0.15);
-        }
-
-        .camera-option {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 10px 14px;
-            cursor: pointer;
-            transition: background 0.15s;
-            font-size: 13px;
-            color: #e8eaed;
-            border: none;
-            background: none;
-            width: 100%;
-            text-align: left;
-            font-family: inherit;
-        }
-
-        .camera-option:hover {
-            background: rgba(33, 150, 243, 0.1);
-        }
-
-        .camera-option.active {
-            color: #2196F3;
-            font-weight: 600;
-        }
-
-        .camera-option-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: transparent;
-            border: 2px solid #555;
-            flex-shrink: 0;
-        }
-
-        .camera-option.active .camera-option-dot {
-            background: #2196F3;
-            border-color: #2196F3;
-            box-shadow: 0 0 6px rgba(33, 150, 243, 0.5);
-        }
-
-        .camera-no-items {
-            padding: 14px;
-            font-size: 12px;
-            color: #666;
-            text-align: center;
-        }
-
         /* Responsive adjustments */
         @media (max-width: 1200px) {
             .main-content {
@@ -833,41 +632,9 @@
     </style>
 </head>
 <body>
-    <!-- Sidebar -->
-    <div class="sidebar-overlay" id="sidebarOverlay"></div>
-    <nav class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            <span class="sidebar-brand">Poke Bowl</span>
-            <button class="sidebar-close" id="sidebarClose">&times;</button>
-        </div>
-        <div class="sidebar-nav">
-            <a href="index.html" class="sidebar-link active">
-                <svg viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
-                <span>Dashboard</span>
-            </a>
-            <a href="upload.html" class="sidebar-link">
-                <svg viewBox="0 0 24 24"><path d="M9 16h6v-6h4l-7-7-7 7h4v6zm-4 2h14v2H5v-2z"/></svg>
-                <span>Upload</span>
-            </a>
-            <a href="analytics.html" class="sidebar-link">
-                <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14H5V7h7v10z"/><path d="M6 9h4v2H6zm0 3h4v2H6zm0 3h4v2H6zm7-6h4v8h-4z"/></svg>
-                <span>Data & Analytics</span>
-            </a>
-            <a href="account.html" class="sidebar-link">
-                <svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
-                <span>Account</span>
-            </a>
-        </div>
-    </nav>
-
     <div class="container">
         <header>
-            <div class="header-left">
-                <button class="menu-btn" id="menuBtn" title="Open menu">
-                    <svg viewBox="0 0 24 24"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
-                </button>
-                <h1>Poke Bowl Inventory System</h1>
-            </div>
+            <h1>Poke Bowl Inventory System - PC Testing</h1>
             <div class="status-area">
                 <div class="diagnostics-trigger" id="diagTrigger">Diagnostics</div>
                 <div class="diagnostics-panel" id="diagPanel">
@@ -899,20 +666,10 @@
             <div class="video-section">
                 <div class="section-header">
                     <span class="section-title">Live Camera Feed</span>
-                    <div class="camera-switcher" id="cameraSwitcher">
-                        <button class="camera-switch-btn" id="cameraSwitchBtn" title="Switch camera source">
-                            <svg viewBox="0 0 24 24"><path d="M20 4h-3.17L15 2H9L7.17 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm-8 13a5 5 0 1 1 0-10 5 5 0 0 1 0 10zm0-8a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"/></svg>
-                            <span id="activeCameraLabel">Camera</span>
-                        </button>
-                        <div class="camera-dropdown" id="cameraDropdown">
-                            <div class="camera-dropdown-header">
-                                <span class="camera-dropdown-title">Camera Sources</span>
-                                <button class="camera-refresh-btn" id="cameraRefreshBtn">Refresh</button>
-                            </div>
-                            <div id="cameraList">
-                                <div class="camera-no-items">Loading cameras…</div>
-                            </div>
-                        </div>
+                    <div class="camera-switch-controls">
+                        <button class="camera-switch-btn active" id="btnWebcam" data-source="webcam">Webcam</button>
+                        <button class="camera-switch-btn" id="btnPhone" data-source="phone">Phone Camera</button>
+                        <span class="camera-switch-status" id="switchStatus"></span>
                     </div>
                 </div>
                 <div class="video-container">
@@ -968,6 +725,10 @@
         let reconnectInterval = null;
         let isConnected = false;
 
+        // Camera switch state
+        let isSwitching = false;
+        let activeSource = 'webcam';
+
         // DOM elements
         const videoFeed = document.getElementById('videoFeed');
         const noFeed = document.getElementById('noFeed');
@@ -985,6 +746,94 @@
         const salesCount = document.getElementById('salesCount');
         const alertsList = document.getElementById('alertsList');
         const alertsCount = document.getElementById('alertsCount');
+        const btnWebcam = document.getElementById('btnWebcam');
+        const btnPhone = document.getElementById('btnPhone');
+        const switchStatus = document.getElementById('switchStatus');
+
+        // Camera switch handlers
+        btnWebcam.addEventListener('click', () => switchCamera('webcam'));
+        btnPhone.addEventListener('click', () => switchCamera('phone'));
+
+        async function switchCamera(source) {
+            if (isSwitching || source === activeSource) {
+                return;
+            }
+
+            isSwitching = true;
+            updateSwitchUI('switching', `Switching to ${source}...`);
+
+            try {
+                const response = await fetch('/api/camera/source', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ source })
+                });
+
+                const result = await response.json();
+
+                if (result.ok) {
+                    activeSource = result.active_source;
+                    updateSwitchUI('success', `Switched to ${result.active_source} (${result.restart_ms}ms)`);
+                    updateButtonStates();
+                    
+                    // Clear success message after 3 seconds
+                    setTimeout(() => {
+                        if (switchStatus.textContent.includes('Switched')) {
+                            switchStatus.textContent = '';
+                            switchStatus.className = 'camera-switch-status';
+                        }
+                    }, 3000);
+                } else {
+                    updateSwitchUI('error', result.error || 'Switch failed');
+                    activeSource = result.active_source;
+                    updateButtonStates();
+                    
+                    // Clear error message after 5 seconds
+                    setTimeout(() => {
+                        if (switchStatus.classList.contains('error')) {
+                            switchStatus.textContent = '';
+                            switchStatus.className = 'camera-switch-status';
+                        }
+                    }, 5000);
+                }
+            } catch (error) {
+                console.error('Camera switch error:', error);
+                updateSwitchUI('error', 'Network error');
+                
+                // Clear error message after 5 seconds
+                setTimeout(() => {
+                    if (switchStatus.classList.contains('error')) {
+                        switchStatus.textContent = '';
+                        switchStatus.className = 'camera-switch-status';
+                    }
+                }, 5000);
+            } finally {
+                isSwitching = false;
+            }
+        }
+
+        function updateSwitchUI(state, message) {
+            switchStatus.textContent = message;
+            switchStatus.className = 'camera-switch-status';
+            
+            if (state === 'switching') {
+                switchStatus.classList.add('switching');
+                btnWebcam.classList.add('disabled');
+                btnPhone.classList.add('disabled');
+            } else {
+                btnWebcam.classList.remove('disabled');
+                btnPhone.classList.remove('disabled');
+                
+                if (state === 'error') {
+                    switchStatus.classList.add('error');
+                }
+            }
+        }
+
+        function updateButtonStates() {
+            btnWebcam.classList.toggle('active', activeSource === 'webcam');
+            btnPhone.classList.toggle('active', activeSource === 'phone');
+        }
 
         // Diagnostics panel positioning (hover-based, no toggle needed)
         function positionDiagnosticsPanel() {
@@ -1021,16 +870,13 @@
         // Reposition panel on window resize
         window.addEventListener('resize', positionDiagnosticsPanel);
 
-        // Freshness tracking for specific products
+        // Freshness tracking
         const TRACKED_PRODUCTS = ['passion fruit', 'maui custard', 'lemon cake', 'mango', 'watermelon', 'pineapple'];
         const EXPIRATION_DAYS = 5;
-        let freshnessState = {}; // Server-provided freshness data
-        let freshnessTimers = {}; // Store interval IDs for live timers
+        let freshnessState = {};
+        let freshnessTimers = {};
 
-        // Note: Sales tracking is now handled server-side on 5-second snapshot intervals
-        // Sales data comes via WebSocket 'sales' messages
-
-        // Connect to WebSocket
+        // WebSocket connection
         function connect() {
             const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
             const wsUrl = `${protocol}//${window.location.host}/ws`;
@@ -1064,7 +910,6 @@
                 isConnected = false;
                 updateConnectionStatus(false);
                 
-                // Attempt reconnection
                 if (!reconnectInterval) {
                     reconnectInterval = setInterval(() => {
                         console.log('Attempting to reconnect...');
@@ -1095,12 +940,6 @@
                 case 'alerts':
                     updateAlerts(message.data);
                     break;
-                case 'camera_switched':
-                    onCameraSwitched(message);
-                    break;
-                case 'camera_switch_result':
-                    onCameraSwitchResult(message);
-                    break;
             }
         }
 
@@ -1111,31 +950,26 @@
             noFeed.style.display = 'none';
         }
 
-        // Update freshness data from server
+        // Update freshness data
         function updateFreshness(data) {
             freshnessState = data || {};
         }
         
-        // Start live timer that updates every second
         function startLiveTimer(productName, element, firstSeenUtc) {
-            // Clear existing timer if any
             if (freshnessTimers[productName]) {
                 clearInterval(freshnessTimers[productName]);
             }
             
-            // Update timer every second
             freshnessTimers[productName] = setInterval(() => {
                 const nowUtc = Date.now() / 1000;
                 const ageSeconds = nowUtc - firstSeenUtc;
                 
-                // Calculate weeks, days, hours, minutes, seconds
                 const weeks = Math.floor(ageSeconds / (7 * 24 * 60 * 60));
                 const days = Math.floor((ageSeconds % (7 * 24 * 60 * 60)) / (24 * 60 * 60));
                 const hours = Math.floor((ageSeconds % (24 * 60 * 60)) / (60 * 60));
                 const minutes = Math.floor((ageSeconds % (60 * 60)) / 60);
                 const seconds = Math.floor(ageSeconds % 60);
                 
-                // Build time string
                 let timeParts = [];
                 if (weeks > 0) timeParts.push(`${weeks}w`);
                 if (days > 0) timeParts.push(`${days}d`);
@@ -1144,11 +978,8 @@
                 timeParts.push(`${seconds}s`);
                 
                 const timeText = timeParts.join(' ');
-                
-                // Check if expired (more than 5 days)
                 const expired = ageSeconds > (EXPIRATION_DAYS * 24 * 60 * 60);
                 
-                // Update element
                 if (element && document.contains(element)) {
                     element.textContent = expired ? `${timeText} - EXPIRED` : timeText;
                     if (expired) {
@@ -1157,21 +988,17 @@
                         element.classList.remove('expired');
                     }
                 } else {
-                    // Element no longer exists, clear timer
                     clearInterval(freshnessTimers[productName]);
                     delete freshnessTimers[productName];
                 }
-            }, 1000); // Update every second
+            }, 1000);
         }
 
-        // Format freshness display with weeks, days, hours, minutes, seconds
         function formatFreshness(productName) {
             const normalized = productName.toLowerCase();
             
-            // Try exact match first
             let freshness = freshnessState[normalized];
             
-            // If no exact match, try partial match
             if (!freshness) {
                 for (const key in freshnessState) {
                     if (key.includes(normalized) || normalized.includes(key)) {
@@ -1181,26 +1008,22 @@
                 }
             }
             
-            // If no freshness data, calculate from now (just detected)
             let firstSeenUtc;
             if (!freshness || !freshness.first_seen_utc) {
-                firstSeenUtc = Date.now() / 1000; // Current time in seconds
+                firstSeenUtc = Date.now() / 1000;
             } else {
                 firstSeenUtc = freshness.first_seen_utc;
             }
             
-            // Calculate time difference
             const nowUtc = Date.now() / 1000;
             const ageSeconds = nowUtc - firstSeenUtc;
             
-            // Calculate weeks, days, hours, minutes, seconds
             const weeks = Math.floor(ageSeconds / (7 * 24 * 60 * 60));
             const days = Math.floor((ageSeconds % (7 * 24 * 60 * 60)) / (24 * 60 * 60));
             const hours = Math.floor((ageSeconds % (24 * 60 * 60)) / (60 * 60));
             const minutes = Math.floor((ageSeconds % (60 * 60)) / 60);
             const seconds = Math.floor(ageSeconds % 60);
             
-            // Build time string
             let timeParts = [];
             if (weeks > 0) timeParts.push(`${weeks}w`);
             if (days > 0) timeParts.push(`${days}d`);
@@ -1209,8 +1032,6 @@
             timeParts.push(`${seconds}s`);
             
             const timeText = timeParts.join(' ');
-            
-            // Check if expired (more than 5 days = 432000 seconds)
             const expired = ageSeconds > (EXPIRATION_DAYS * 24 * 60 * 60);
             
             return {
@@ -1222,26 +1043,18 @@
 
         // Update inventory display
         function updateInventory(inventory) {
-            // Calculate total items
             const total = Object.values(inventory).reduce((sum, count) => sum + count, 0);
             totalItems.textContent = total;
 
-            // Note: Sales detection is now handled server-side on 5-second snapshot intervals
-            // No client-side sales detection to avoid false positives from frame-by-frame fluctuations
-
-            // Clear current list
             inventoryList.innerHTML = '';
 
-            // Check if empty
             if (total === 0) {
                 inventoryList.innerHTML = '<div class="empty-inventory">No items detected</div>';
                 return;
             }
 
-            // Sort by count (descending)
             const sortedItems = Object.entries(inventory).sort((a, b) => b[1] - a[1]);
 
-            // Create inventory items
             sortedItems.forEach(([name, count]) => {
                 const item = document.createElement('div');
                 item.className = 'inventory-item';
@@ -1255,9 +1068,7 @@
                 
                 itemInfo.appendChild(itemName);
                 
-                // Add freshness timer for tracked products
                 const normalizedName = name.toLowerCase();
-                // Check if any tracked product is contained in this product name
                 const isTracked = TRACKED_PRODUCTS.some(tracked => 
                     normalizedName.includes(tracked) || tracked.includes(normalizedName)
                 );
@@ -1273,7 +1084,6 @@
                     freshnessDiv.textContent = freshness.text;
                     itemInfo.appendChild(freshnessDiv);
                     
-                    // Start live timer update for this product
                     startLiveTimer(name, freshnessDiv, freshness.firstSeenUtc);
                 }
                 
@@ -1285,12 +1095,9 @@
                 item.appendChild(itemCount);
                 inventoryList.appendChild(item);
             });
-
-            // Update previous total for next comparison
-            previousInventoryTotal = total;
         }
 
-        // Update sales log from server data (5-second snapshot interval)
+        // Update sales log
         function updateSalesFromServer(salesData) {
             if (!salesData || salesData.length === 0) {
                 salesCount.textContent = '0';
@@ -1301,7 +1108,6 @@
             salesCount.textContent = salesData.length;
             salesLogList.innerHTML = '';
             
-            // Display sales in order (newest first)
             salesData.forEach(sale => {
                 const entry = document.createElement('div');
                 entry.className = 'sales-entry';
@@ -1309,7 +1115,6 @@
                 const productDiv = document.createElement('div');
                 productDiv.className = 'sales-product';
                 
-                // Display product name and quantity
                 const productName = sale.product_name || 'Unknown';
                 const quantity = sale.quantity_delta || 1;
                 if (quantity > 1) {
@@ -1320,7 +1125,6 @@
                 
                 const timeDiv = document.createElement('div');
                 timeDiv.className = 'sales-time';
-                // Use EST timestamp from server
                 timeDiv.textContent = sale.timestamp_est || new Date(sale.timestamp_utc * 1000).toLocaleString();
                 
                 entry.appendChild(productDiv);
@@ -1329,7 +1133,7 @@
             });
         }
 
-        // Update alerts display
+        // Update alerts
         function updateAlerts(alerts) {
             alertsCount.textContent = alerts.length;
             
@@ -1371,7 +1175,7 @@
             });
         }
 
-        // Update performance stats
+        // Update stats
         function updateStats(stats) {
             if (stats.fps !== undefined) {
                 diagFPS.textContent = stats.fps.toFixed(1);
@@ -1401,14 +1205,6 @@
             }
         }
 
-        // Update freshness timers every minute
-        setInterval(() => {
-            // Trigger inventory re-render to update freshness displays
-            if (isConnected) {
-                // The freshness will be recalculated on next inventory update
-            }
-        }, 60000); // Update every minute
-
         // Logout handler
         function handleLogout() {
             fetch('/api/logout', {
@@ -1420,189 +1216,41 @@
             })
             .catch(error => {
                 console.error('Logout error:', error);
-                // Redirect anyway
                 window.location.href = '/login';
             });
         }
 
-        // Setup logout button
         const logoutButton = document.getElementById('logoutButton');
         if (logoutButton) {
             logoutButton.addEventListener('click', handleLogout);
         }
 
-        // ---------------------------------------------------------------
-        // Camera Switcher
-        // ---------------------------------------------------------------
-        const cameraSwitchBtn = document.getElementById('cameraSwitchBtn');
-        const cameraDropdown = document.getElementById('cameraDropdown');
-        const cameraList = document.getElementById('cameraList');
-        const cameraRefreshBtn = document.getElementById('cameraRefreshBtn');
-        const activeCameraLabel = document.getElementById('activeCameraLabel');
-
-        let availableCameras = [];
-        let activeCameraIndex = null;
-        let cameraSwitching = false;
-
-        // Toggle dropdown
-        cameraSwitchBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            const isOpen = cameraDropdown.classList.contains('open');
-            cameraDropdown.classList.toggle('open', !isOpen);
-            if (!isOpen && availableCameras.length === 0) {
-                fetchCameras(false);
-            }
-        });
-
-        // Close dropdown on outside click
-        document.addEventListener('click', (e) => {
-            if (!e.target.closest('#cameraSwitcher')) {
-                cameraDropdown.classList.remove('open');
-            }
-        });
-
-        // Refresh cameras list
-        cameraRefreshBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            fetchCameras(true);
-        });
-
-        // Fetch cameras from backend
-        function fetchCameras(refresh) {
-            const url = refresh ? '/api/cameras?refresh=1' : '/api/cameras';
-            cameraList.innerHTML = '<div class="camera-no-items">Scanning…</div>';
-
-            fetch(url, { credentials: 'same-origin' })
-                .then(r => r.json())
-                .then(data => {
-                    availableCameras = data.cameras || [];
-                    activeCameraIndex = data.active_index;
-                    renderCameraList();
-                    updateActiveLabel();
-                })
-                .catch(err => {
-                    console.error('Failed to fetch cameras:', err);
-                    cameraList.innerHTML = '<div class="camera-no-items">Failed to load cameras</div>';
-                });
-        }
-
-        // Render camera options
-        function renderCameraList() {
-            if (availableCameras.length === 0) {
-                cameraList.innerHTML = '<div class="camera-no-items">No cameras detected</div>';
-                return;
-            }
-
-            cameraList.innerHTML = '';
-            availableCameras.forEach(cam => {
-                const btn = document.createElement('button');
-                btn.className = 'camera-option' + (cam.index === activeCameraIndex ? ' active' : '');
-                btn.innerHTML =
-                    '<span class="camera-option-dot"></span>' +
-                    '<span>' + cam.name + '</span>';
-                btn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    switchCamera(cam.index);
-                });
-                cameraList.appendChild(btn);
-            });
-        }
-
-        // Update the label on the toggle button
-        function updateActiveLabel() {
-            if (activeCameraIndex === null || activeCameraIndex === undefined) {
-                activeCameraLabel.textContent = 'Camera';
-                return;
-            }
-            const cam = availableCameras.find(c => c.index === activeCameraIndex);
-            activeCameraLabel.textContent = cam ? cam.name : ('Camera ' + activeCameraIndex);
-        }
-
-        // Request camera switch
-        function switchCamera(index) {
-            if (cameraSwitching || index === activeCameraIndex) return;
-            cameraSwitching = true;
-
-            // Visual feedback
-            activeCameraLabel.textContent = 'Switching…';
-
-            fetch('/api/camera/switch', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                credentials: 'same-origin',
-                body: JSON.stringify({ index: index }),
-            })
-            .then(r => r.json())
-            .then(data => {
-                cameraSwitching = false;
-                if (data.success) {
-                    activeCameraIndex = data.active_index;
-                    renderCameraList();
-                    updateActiveLabel();
-                    cameraDropdown.classList.remove('open');
-                } else {
-                    console.error('Camera switch failed:', data.message);
-                    updateActiveLabel();
-                }
-            })
-            .catch(err => {
-                cameraSwitching = false;
-                console.error('Camera switch error:', err);
-                updateActiveLabel();
-            });
-        }
-
-        // Handle WS notification that camera changed (from another client)
-        function onCameraSwitched(msg) {
-            activeCameraIndex = msg.active_index;
-            renderCameraList();
-            updateActiveLabel();
-        }
-
-        // Handle WS switch result (if switching via WS instead of REST)
-        function onCameraSwitchResult(msg) {
-            cameraSwitching = false;
-            if (msg.success) {
-                activeCameraIndex = msg.active_index;
-                renderCameraList();
-                updateActiveLabel();
-                cameraDropdown.classList.remove('open');
-            } else {
-                console.error('WS camera switch failed:', msg.message);
-                updateActiveLabel();
-            }
-        }
-
-        // Sidebar toggle
-        const menuBtn = document.getElementById('menuBtn');
-        const sidebar = document.getElementById('sidebar');
-        const sidebarOverlay = document.getElementById('sidebarOverlay');
-        const sidebarClose = document.getElementById('sidebarClose');
-
-        function openSidebar() { sidebar.classList.add('open'); sidebarOverlay.classList.add('active'); }
-        function closeSidebar() { sidebar.classList.remove('open'); sidebarOverlay.classList.remove('active'); }
-
-        menuBtn.addEventListener('click', openSidebar);
-        sidebarClose.addEventListener('click', closeSidebar);
-        sidebarOverlay.addEventListener('click', closeSidebar);
-
-        // Initialize connection
+        // Initialize
         connect();
 
-        // Pre-fetch camera list once connected
-        setTimeout(() => fetchCameras(false), 1500);
-
-        // Handle page visibility
         document.addEventListener('visibilitychange', () => {
-            if (document.hidden) {
-                console.log('Page hidden');
-            } else {
-                console.log('Page visible');
+            if (!document.hidden) {
                 if (!isConnected && !reconnectInterval) {
                     connect();
                 }
             }
         });
+
+        // Fetch initial camera status
+        fetch('/api/camera/status')
+            .then(res => res.json())
+            .then(data => {
+                if (data.ok && data.active_source) {
+                    activeSource = data.active_source;
+                    updateButtonStates();
+                }
+            })
+            .catch(err => console.error('Failed to fetch camera status:', err));
     </script>
 </body>
 </html>
+
+
+
+
+

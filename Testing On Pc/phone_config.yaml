@@ -3,14 +3,14 @@
 
 # Camera Settings (Phone Camera)
 camera:
-  index: 1              # Phone camera index (1 = iPhone via USB, may vary)
+  index: 0              # Phone camera index (0 = iPhone via USB on this system)
   width: 1280           # Resolution
   height: 720
   fps: 30
 
 # YOLO Detector Settings (PC-optimized)
 detector:
-  model_path: ../best.pt           # Path to YOLO model (relative to project root)
+  model_path: best.pt              # Path to YOLO model (relative to project root)
   conf_threshold: 0.25             # Confidence threshold
   iou_threshold: 0.45              # NMS IoU threshold
   imgsz: 640                       # YOLO input size

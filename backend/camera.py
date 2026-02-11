@@ -1,12 +1,14 @@
 """
 USB Camera Handler for Jetson Orin Nano
-Handles camera initialization, frame capture, and reconnection logic
+Handles camera initialization, frame capture, reconnection logic,
+and runtime camera switching between multiple sources.
 """
 
 import cv2
 import logging
+import platform
 import time
-from typing import Optional, Tuple
+from typing import Optional, Tuple, List, Dict
 import numpy as np
 
 logger = logging.getLogger(__name__)
@@ -190,6 +192,90 @@ class USBCamera:
         """Context manager exit"""
         self.release()
     
+    # ------------------------------------------------------------------
+    # Camera enumeration & runtime switching
+    # ------------------------------------------------------------------
+
+    @staticmethod
+    def enumerate_cameras(max_index: int = 10) -> List[Dict]:
+        """
+        Probe video device indices and return a list of available cameras.
+
+        Each entry contains:
+            - index: int  (V4L2 device index)
+            - name:  str  (human-readable label)
+            - backend: str
+
+        Args:
+            max_index: Highest device index to probe (exclusive).
+
+        Returns:
+            List of camera info dicts, sorted by index.
+        """
+        cameras: List[Dict] = []
+        is_linux = platform.system() == "Linux"
+
+        for idx in range(max_index):
+            try:
+                cap = cv2.VideoCapture(idx, cv2.CAP_V4L2 if is_linux else cv2.CAP_ANY)
+                if cap.isOpened():
+                    backend = cap.getBackendName() if hasattr(cap, "getBackendName") else "unknown"
+                    w = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+                    h = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+                    name = f"Camera {idx} ({backend} {w}x{h})"
+
+                    # On Linux, try to read /sys for a friendlier name
+                    if is_linux:
+                        try:
+                            with open(f"/sys/class/video4linux/video{idx}/name") as f:
+                                hw_name = f.read().strip()
+                            if hw_name:
+                                name = f"{hw_name} (index {idx})"
+                        except Exception:
+                            pass
+
+                    cameras.append({
+                        "index": idx,
+                        "name": name,
+                        "backend": backend,
+                    })
+                    cap.release()
+            except Exception:
+                continue
+
+        logger.info(f"Enumerated {len(cameras)} camera(s): {[c['name'] for c in cameras]}")
+        return cameras
+
+    def switch_camera(self, new_index: int) -> bool:
+        """
+        Safely release the current camera and re-initialise on *new_index*.
+
+        Thread-safe: uses the internal lock so the streaming loop won't
+        read half-initialised state.
+
+        Args:
+            new_index: V4L2 device index to switch to.
+
+        Returns:
+            True if the new camera opened successfully, False otherwise
+            (in which case the old camera is also closed).
+        """
+        logger.info(f"Switching camera from index {self.camera_index} → {new_index}")
+
+        # Release current device
+        self.release()
+
+        # Update index and re-open
+        self.camera_index = new_index
+        success = self.open()
+
+        if success:
+            logger.info(f"Camera switched successfully to index {new_index}")
+        else:
+            logger.error(f"Failed to switch to camera index {new_index}")
+
+        return success
+
     def __del__(self):
         """Destructor to ensure cleanup"""
         self.release()

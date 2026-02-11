@@ -229,6 +229,15 @@ class InventorySystem:
                 frontend_dir=frontend_dir
             )
             
+            # Expose components to the server for runtime features
+            self.server.set_camera(self.camera)
+            self.server.set_detector(self.detector)
+            self.server.set_inventory_tracker(self.inventory_tracker)
+            
+            # Enumerate available cameras and cache the list
+            available_cameras = USBCamera.enumerate_cameras()
+            self.server.set_available_cameras(available_cameras)
+            
             logger.info(f"Web server initialized at http://{server_config.get('host', '0.0.0.0')}:{server_config.get('port', 8080)}")
             
             # Initialize stream manager

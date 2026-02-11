@@ -2,16 +2,39 @@
 
 ## Camera Setup Commands
 
-### Use PC Built-in Webcam
+### Use Switchable Camera Mode (NEW - Recommended)
+
+```bash
+python3 run_pc_switchable.py
+```
+
+**What it does:**
+- Starts with webcam (index 0) by default
+- Allows switching between webcam and phone camera via web UI
+- No need to restart when switching cameras
+- Config: Uses both `pc_config.yaml` and `phone_config.yaml`
+- Best for: Development and testing with flexibility
+
+**Features:**
+- Two buttons in web UI: "Webcam" and "Phone Camera"
+- Automatic rollback if camera switch fails
+- State persisted across restarts
+- Real-time status messages
+
+**See:** `README_SWITCHABLE.md` for detailed documentation
+
+---
+
+### Use PC Built-in Webcam (Fixed)
 
 ```bash
 python3 run_pc_webcam.py
 ```
 
 **What it does:**
-- Uses camera index 0 (built-in webcam)
+- Uses camera index 0 (built-in webcam) only
 - Config: `pc_config.yaml`
-- Best for: Testing on Mac/PC without external devices
+- Best for: Simple testing when you only need webcam
 
 **Troubleshooting:**
 - If camera not found, check permissions: System Preferences → Security & Privacy → Camera
@@ -19,16 +42,16 @@ python3 run_pc_webcam.py
 
 ---
 
-### Use Phone Camera (iPhone via USB)
+### Use Phone Camera (iPhone via USB) (Fixed)
 
 ```bash
 python3 run_phone_camera.py
 ```
 
 **What it does:**
-- Uses camera index 1 (default, configurable)
+- Uses camera index 1 (default, configurable) only
 - Config: `phone_config.yaml`
-- Best for: Using iPhone camera connected via USB
+- Best for: Testing when you only need phone camera
 
 **Setup Steps:**
 1. Connect iPhone via USB cable
@@ -45,6 +68,35 @@ python3 run_phone_camera.py
  - Open `phone_config.yaml`
  - Change `camera.index: 1` to `camera.index: 2` (or 3, etc.)
  - List available cameras: Run the script and it will show all cameras
+
+---
+
+### Use Switchable Camera Mode (NEW)
+
+```bash
+python3 run_pc_switchable.py
+```
+
+**What it does:**
+- Starts with default camera (webcam or last-used source)
+- Allows switching between webcam and phone camera via web UI
+- No restart needed to change camera sources
+- Best for: Testing both camera sources without restarting
+
+**Features:**
+- Real-time camera switching via web interface
+- Automatic rollback if new source fails
+- State persistence (remembers last-used source)
+- Safe atomic switching (no crashes)
+
+**How to switch cameras:**
+1. Open web interface at http://localhost:8080
+2. Look for camera source buttons next to "Live Camera Feed"
+3. Click "Webcam" or "Phone Camera" to switch
+4. Video stream pauses briefly (~1-3 seconds) during switch
+5. Stream resumes from new source
+
+**Documentation:** See `CAMERA_SWITCHING.md` for details
 
 ---
 
@@ -134,7 +186,8 @@ python3 -c "import cv2; cap = cv2.VideoCapture(1); print('Phone Camera OK' if ca
 
 ## Summary
 
-| Command | Camera | Config File | Use Case |
-|---------|--------|-------------|----------|
-| `python3 run_pc_webcam.py` | Built-in webcam (index 0) | `pc_config.yaml` | Quick testing, no external devices |
-| `python3 run_phone_camera.py` | iPhone via USB (index 1+) | `phone_config.yaml` | Higher quality, mobile camera |
+| Command | Camera | Config File | Switching | Use Case |
+|---------|--------|-------------|-----------|----------|
+| `python3 run_pc_switchable.py` | **Both** | Both configs | **Yes** | **Flexible development/testing** |
+| `python3 run_pc_webcam.py` | Built-in webcam (index 0) | `pc_config.yaml` | No | Quick testing, no external devices |
+| `python3 run_phone_camera.py` | iPhone via USB (index 1+) | `phone_config.yaml` | No | Testing with phone camera only |

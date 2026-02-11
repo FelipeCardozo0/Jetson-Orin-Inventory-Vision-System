@@ -168,6 +168,47 @@ For Gmail, use an [App Password](https://support.google.com/accounts/answer/1858
 
 ---
 
+## Run Commands
+
+### Simple Start/Stop (Jetson & PC)
+
+**Start the system:**
+```bash
+./start.sh
+```
+
+**Stop the system:**
+```bash
+./stop.sh
+```
+
+**Restart the system:**
+```bash
+./restart.sh
+```
+
+**Check status:**
+```bash
+./status.sh
+```
+
+### PC Testing Modes
+
+```bash
+./start.sh webcam      # Use built-in webcam (default)
+./start.sh phone       # Use iPhone via USB
+./start.sh switchable  # Use switchable camera UI
+```
+
+### What Happens
+
+- **Jetson**: Starts systemd service and opens Chromium to `http://localhost:8080`
+- **PC**: Starts Python backend and opens Chrome to `http://127.0.0.1:8080`
+- Browser opens automatically when backend is ready
+- Re-running `./start.sh` while running opens browser without duplicate processes
+
+---
+
 ## Quick Start
 
 ### Prerequisites
